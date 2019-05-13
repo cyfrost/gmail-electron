@@ -167,7 +167,29 @@ app.on('ready', () => {
           mainWindow.show()
         },
         label: 'Show'
-      })
+      },
+      {
+        label: ('Hide'),
+        visible: !config.get("startminimized"), // Show this option on start
+        click: function () {
+          mainWindow.hide();
+        }
+      },
+      {
+        type: "separator"
+      },
+      // {
+      //   label: "Options",
+      //   click: global.settings.init
+      // },
+      {
+        type: "separator"
+      },
+      // {
+      //   label: "About",
+      //   click: global.about.init
+      // }
+      )
     }
 
     const contextMenu = Menu.buildFromTemplate(contextMenuTemplate)
