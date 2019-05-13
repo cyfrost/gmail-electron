@@ -1,4 +1,4 @@
-import { app, shell, Menu, MenuItemConstructorOptions } from 'electron'
+import { app, shell, Menu } from 'electron'
 import { is } from 'electron-util'
 
 import config from './config'
@@ -7,7 +7,7 @@ import { setMinimalMode } from './minimal-mode'
 
 const APP_NAME = app.getName()
 
-const darwinMenu: MenuItemConstructorOptions[] = [
+const darwinMenu: any[] = [
   {
     label: APP_NAME,
     submenu: [
@@ -51,7 +51,7 @@ const darwinMenu: MenuItemConstructorOptions[] = [
             label: 'Custom styles',
             type: 'checkbox',
             checked: config.get('customStyles'),
-            click({ checked }) {
+            click(checked: boolean) {
               config.set('customStyles', checked)
               showRestartDialog(checked, 'custom styles')
             }
@@ -60,7 +60,7 @@ const darwinMenu: MenuItemConstructorOptions[] = [
             label: 'Minimal Mode',
             type: 'checkbox',
             checked: config.get('minimalMode'),
-            click({ checked }) {
+            click(checked: boolean) {
               config.set('minimalMode', checked)
               setMinimalMode(checked)
             }
@@ -83,7 +83,7 @@ const darwinMenu: MenuItemConstructorOptions[] = [
         label: 'Debug Mode',
         type: 'checkbox',
         checked: config.get('debugMode'),
-        click({ checked }) {
+        click(checked: boolean) {
           config.set('debugMode', checked)
           showRestartDialog(checked, 'debug mode')
         }

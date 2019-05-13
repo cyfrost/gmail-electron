@@ -7,5 +7,6 @@ export function setMinimalMode(enabled: boolean): void {
 }
 
 export function init(): void {
-  setMinimalMode(config.get('minimalMode'))
+  const isMinimalModeEnabled: any = config.get('minimalMode')
+  setMinimalMode(isMinimalModeEnabled)
 }

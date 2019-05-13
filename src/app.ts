@@ -61,7 +61,7 @@ app.on('second-instance', () => {
 })
 
 function createWindow(): void {
-  const lastWindowState = config.get('lastWindowState')
+  const lastWindowState: any = config.get('lastWindowState')
 
   mainWindow = new BrowserWindow({
     title: app.getName(),
@@ -225,6 +225,7 @@ app.on('ready', () => {
     } else {
       shell.openExternal(url)
     }
+    return null
   })
 })
 
