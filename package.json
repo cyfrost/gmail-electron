@@ -105,8 +105,11 @@
     },
     "linux": {
       "target": [
+        "deb",
+        "rpm",
         "AppImage",
-        "deb"
+        "snap",
+        "pacman"
       ],
       "category": "Network;Office"
     },

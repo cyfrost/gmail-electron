@@ -25,6 +25,18 @@ build-rpm:
 build-deb:
 	@./node_modules/.bin/electron-builder --linux deb
 
+.PHONY: build-snap
+build-snap:
+	@./node_modules/.bin/electron-builder --linux snap
+
+.PHONY: build-pacman
+build-pacman:
+	@./node_modules/.bin/electron-builder --linux pacman
+
+.PHONY: build-appimage
+build-appimage:
+	@./node_modules/.bin/electron-builder --linux appImage
+
 .PHONY: build-win
 build-win:
 	@./node_modules/.bin/electron-builder --win
