@@ -1,1 +1,0 @@
-{"version":3,"file":"minimal-mode.js","sourceRoot":"","sources":["../src/minimal-mode.ts"],"names":[],"mappings":";;;;;AAAA,sDAA6B;AAE7B,mCAAiD;AAEjD,SAAgB,cAAc,CAAC,OAAgB;IAC7C,+BAAuB,CAAC,kBAAkB,EAAE,OAAO,CAAC,CAAA;AACtD,CAAC;AAFD,wCAEC;AAED,SAAgB,IAAI;IAClB,MAAM,oBAAoB,GAAQ,gBAAM,CAAC,GAAG,CAAC,aAAa,CAAC,CAAC;IAC5D,cAAc,CAAC,oBAAoB,CAAC,CAAC;AACvC,CAAC;AAHD,oBAGC"}

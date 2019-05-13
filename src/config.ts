@@ -27,7 +27,7 @@ const defaults = {
   } as unknown) as LastWindowState,
   minimalMode: false,
   debugMode: false,
-  customStyles: true
+  customStyles: false
 }
 
 const config = new Store({
