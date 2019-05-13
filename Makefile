@@ -33,9 +33,13 @@ build-win:
 build-linux:
 	@./node_modules/.bin/electron-builder --linux
 
+.PHONY: build-macos
+build-macos:
+	@./node_modules/.bin/electron-builder --macos
+
 .PHONY: build-all
 build-all:
-	@./node_modules/.bin/electron-builder --linux --windows
+	@./node_modules/.bin/electron-builder --linux --windows --macos
 
 .PHONY: run
 run:
