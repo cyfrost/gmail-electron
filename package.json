@@ -108,7 +108,6 @@
         "deb",
         "rpm",
         "AppImage",
-        "snap",
         "pacman"
       ],
       "category": "Network;Office"

@@ -18,7 +18,6 @@ import electronContextMenu from 'electron-context-menu'
 import config from './config'
 import { init as initDebug } from './debug'
 import menu from './menu'
-import { init as initMinimalMode } from './minimal-mode'
 import { platform, getUrlAccountId } from './helpers'
 
 // Initialize the debug mode handler when starting the app
@@ -88,10 +87,9 @@ function createWindow(): void {
   mainWindow.loadURL('https://mail.google.com')
 
   mainWindow.webContents.on('dom-ready', () => {
-    addCustomCSS(mainWindow)
-
-    // Initialize minimal mode if the setting is turned on
-    initMinimalMode()
+    log.info("Node Version: ", process.versions.node);
+    log.info("Electron Version: ", process.versions.electron);
+    log.info("Chromium Version:", process.versions.chrome);
   })
 
   mainWindow.on('close', e => {

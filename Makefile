@@ -51,7 +51,7 @@ build-macos:
 
 .PHONY: build-all
 build-all:
-	@./node_modules/.bin/electron-builder --linux --windows --macos
+	@./node_modules/.bin/electron-builder --linux --windows
 
 .PHONY: run
 run:
