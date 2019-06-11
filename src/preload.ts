@@ -85,9 +85,3 @@ window.addEventListener('load', () => {
   //   that should close the new window
   attachButtonListeners()
 })
-
-// Toggle the minimal mode class when a message is
-//   received from the main process
-ipc.on('set-minimal-mode', (_: Event, enabled: boolean) => {
-  document.body.classList[enabled ? 'add' : 'remove']('minimal-mode')
-})

@@ -1,6 +1,5 @@
-import { app, shell, Menu } from 'electron'
+import { app, BrowserWindow, shell, Menu } from 'electron'
 import config from './config'
-import { getMainWindow } from './utils'
 
 const darwinMenu: any[] = [
   {
@@ -49,9 +48,10 @@ const darwinMenu: any[] = [
     submenu: [
       {
         label: `Reload`,
+        role: 'reload',
         accelerator: 'CommandOrControl+R',
         click: function() {
-          let mainWindow = getMainWindow()
+          let mainWindow = BrowserWindow.getAllWindows()[0];
           if (mainWindow) {
             mainWindow.reload()
           }
