@@ -26,6 +26,7 @@ app.setAppUserModelId('io.cheung.gmail-desktop')
 
 let mainWindow: BrowserWindow
 let onlineStatusWindow: BrowserWindow
+let aboutWindow: BrowserWindow
 let replyToWindow: BrowserWindow
 let isQuitting = false
 let tray: Tray
@@ -62,7 +63,6 @@ function createWindow(): void {
 
   mainWindow = new BrowserWindow({
     title: app.getName(),
-    titleBarStyle: config.get('customStyles') ? 'hiddenInset' : 'default',
     width: lastWindowState.bounds.width,
     height: lastWindowState.bounds.height,
     x: lastWindowState.bounds.x,
@@ -157,12 +157,18 @@ app.on('ready', () => {
 
   Menu.setApplicationMenu(menu)
 
-  mainWindow.setMenuBarVisibility(false);
-  mainWindow.setAutoHideMenuBar(true);
+  mainWindow.setMenuBarVisibility(false)
+  mainWindow.setAutoHideMenuBar(true)
 
-  if ((is.linux || is.windows) && !tray) {
+  if (!tray) {
     const appName = app.getName()
-    const iconPath = path.join(__dirname, '..', 'src', 'assets', 'tray-icon.png')
+    const iconPath = path.join(
+      __dirname,
+      '..',
+      'src',
+      'assets',
+      'tray-icon.png'
+    )
 
     const contextMenuTemplate: MenuItemConstructorOptions[] = [
       {
@@ -170,39 +176,37 @@ app.on('ready', () => {
       }
     ]
 
-    if (is.linux) {
-      contextMenuTemplate.unshift(
-        {
-          label: 'Show',
-          click: function() {
-            mainWindow.show()
-          },
-          enabled: false,
-          id: 'show-win'
+    contextMenuTemplate.unshift(
+      {
+        label: 'Show',
+        click: function() {
+          mainWindow.show()
         },
-        {
-          label: 'Hide',
-          click: function() {
-            mainWindow.hide()
-          },
-          id: 'hide-win'
+        enabled: false,
+        id: 'show-win'
+      },
+      {
+        label: 'Hide',
+        click: function() {
+          mainWindow.hide()
         },
-        {
-          type: 'separator'
-        },
-        // {
-        //   label: "Options",
-        //   click: global.settings.init
-        // },
-        {
-          type: 'separator'
-        }
-        // {
-        //   label: "About",
-        //   click: global.about.init
-        // }
-      )
-    }
+        id: 'hide-win'
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'About',
+        click: displayAppAbout
+      },
+      // {
+      //   label: "Options",
+      //   click: global.settings.init
+      // },
+      {
+        type: 'separator'
+      }
+    )
     trayContextMenu = Menu.buildFromTemplate(contextMenuTemplate)
 
     tray = new Tray(iconPath)
@@ -255,6 +259,31 @@ app.on('ready', () => {
     return null
   })
 })
+
+function displayAppAbout() {
+  
+  if (aboutWindow !== undefined){
+    aboutWindow.show();
+  }
+  else{
+    aboutWindow = new BrowserWindow({
+    title: 'About ' + app.getName(),
+    width: 570,
+    height: 680,
+    resizable: false,
+    center: true,
+    frame: true,
+    webPreferences: {
+      nodeIntegration: true,
+      nativeWindowOpen: true
+    }
+    })
+  }
+  aboutWindow.loadURL(`file://${__dirname}/../extras/html/about.html`);
+  aboutWindow.setMenu(null)
+  aboutWindow.setMenuBarVisibility(false)
+  aboutWindow.show()
+}
 
 app.on('open-url', (event, url) => {
   event.preventDefault()
