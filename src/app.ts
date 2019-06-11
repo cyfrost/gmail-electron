@@ -41,6 +41,7 @@ if (!is.development) {
 app.setAppUserModelId('io.cheung.gmail-desktop')
 
 let mainWindow: BrowserWindow
+let onlineStatusWindow: BrowserWindow
 let replyToWindow: BrowserWindow
 let isQuitting = false
 let tray: Tray
@@ -101,14 +102,9 @@ function createWindow(): void {
   })
 
   ipc.on('unread-count', (_: any, unreadCount: number) => {
-    if (is.macos) {
-      app.dock.setBadge(unreadCount ? unreadCount.toString() : '')
-    }
-
     if ((is.linux || is.windows) && tray) {
       const icon = unreadCount ? 'tray-icon-unread.png' : 'tray-icon.png'
       const iconPath = path.join(__dirname, '..', 'static', icon)
-
       tray.setImage(iconPath)
     }
   })
@@ -146,7 +142,19 @@ function addCustomCSS(windowElement: BrowserWindow): void {
   }
 }
 
+ipc.on('online-status-changed', (_event: any, status: string) => {
+  log.info("Online Status Changed")
+  log.info(status)
+  if (status === "online"){
+    mainWindow.reload();
+  }
+})
+
 app.on('ready', () => {
+  
+  onlineStatusWindow = new BrowserWindow({ width: 0, height: 0, show: false, webPreferences: {nodeIntegration: true} });
+  onlineStatusWindow.loadURL(`file://${__dirname}/../extras/html/online_status.html`)
+
   createWindow()
 
   Menu.setApplicationMenu(menu)
