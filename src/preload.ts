@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron'
-import elementReady from 'element-ready'
+import * as elementReady from 'element-ready'
 import log from 'electron-log'
 
 const INTERVAL = 1000
@@ -49,7 +49,7 @@ function attachButtonListeners(): void {
 
   selectors.forEach(async selector => {
     try {
-      const buttonReady = elementReady(`body.xE .G-atb .${selector}`)
+      const buttonReady: any = elementReady(`body.xE .G-atb .${selector}`)
 
       const readyTimeout = setTimeout(() => {
         buttonReady.cancel(`Detect button "${selector}" timed out`)
@@ -58,7 +58,7 @@ function attachButtonListeners(): void {
       const button = await buttonReady
       clearTimeout(readyTimeout)
 
-      button.addEventListener('click', () => window.close())
+      button!.addEventListener('click', () => window.close())
     } catch (error) {
       log.error(error)
     }

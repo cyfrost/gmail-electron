@@ -1,5 +1,5 @@
-import path from 'path'
-import fs from 'fs'
+import * as path from 'path'
+import * as fs from 'fs'
 import {
   app,
   ipcMain as ipc,
@@ -11,9 +11,9 @@ import {
 } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import { is } from 'electron-util'
-import log from 'electron-log'
-import electronDl from 'electron-dl'
-import electronContextMenu from 'electron-context-menu'
+import * as log from 'electron-log'
+import * as electronDl from 'electron-dl'
+import * as electronContextMenu from 'electron-context-menu'
 
 import config from './config'
 import { init as initDebug } from './debug'

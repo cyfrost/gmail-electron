@@ -1,4 +1,4 @@
-import electronUtils from 'electron-util'
+import * as electronUtils from 'electron-util'
 
 // URL: `mail.google.com/mail/u/<local_account_id>`
 export function getUrlAccountId(url: string): null | string {

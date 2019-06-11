@@ -1,4 +1,4 @@
-import electronDebug from 'electron-debug'
+import * as electronDebug from 'electron-debug'
 import config from './config'
 
 const OPTIONS = {

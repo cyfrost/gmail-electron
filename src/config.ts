@@ -1,6 +1,6 @@
-import fs from 'fs'
-import Store from 'electron-store'
-import oldConfig from 'electron-settings'
+import * as fs from 'fs'
+import * as Store from 'electron-store'
+import * as oldConfig from 'electron-settings'
 import { is } from 'electron-util'
 
 export interface LastWindowState {
