@@ -1,7 +1,7 @@
 {
   "name": "Gmail",
   "productName": "Gmail",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "Gmail desktop client for Linux, Windows, and macOS",
   "private": true,
   "repository": "cyfrost/gmail-electron",

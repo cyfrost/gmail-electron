@@ -1,5 +1,4 @@
 import * as path from 'path'
-import * as fs from 'fs'
 import {
   app,
   ipcMain as ipc,
@@ -9,7 +8,6 @@ import {
   Tray,
   MenuItemConstructorOptions
 } from 'electron'
-import { autoUpdater } from 'electron-updater'
 import { is } from 'electron-util'
 import * as log from 'electron-log'
 import * as electronDl from 'electron-dl'
@@ -18,27 +16,15 @@ import * as electronContextMenu from 'electron-context-menu'
 import config from './config'
 import { init as initDebug } from './debug'
 import menu from './menu'
-import { platform, getUrlAccountId } from './helpers'
+import { getUrlAccountId } from './helpers'
 
-const shouldStartMinimized = app.commandLine.hasSwitch('start-minimized');
+const shouldStartMinimized = app.commandLine.hasSwitch('start-minimized')
 
 // Initialize the debug mode handler when starting the app
 initDebug()
 
 electronDl({ showBadge: false })
 electronContextMenu({ showCopyImageAddress: true, showSaveImageAs: true })
-
-if (!is.development) {
-  log.transports.file.level = 'info'
-  autoUpdater.logger = log
-
-  const UPDATE_CHECK_INTERVAL = 60000 * 60 * 3 // 3 Hours
-  setInterval(() => {
-    autoUpdater.checkForUpdates()
-  }, UPDATE_CHECK_INTERVAL)
-
-  autoUpdater.checkForUpdates()
-}
 
 app.setAppUserModelId('io.cheung.gmail-desktop')
 
@@ -47,29 +33,33 @@ let onlineStatusWindow: BrowserWindow
 let replyToWindow: BrowserWindow
 let isQuitting = false
 let tray: Tray
+let trayContextMenu: any
 
-if (!app.requestSingleInstanceLock()) {
-  app.quit()
-}
-
-function displayMainWindow(){
-  if (!shouldStartMinimized){
-    mainWindow.show();
-  }
-  else{
-    mainWindow.hide();
-  }
-}
-
-app.on('second-instance', () => {
-  if (mainWindow) {
-    if (mainWindow.isMinimized()) {
-      mainWindow.restore()
-    }
-
+function displayMainWindow() {
+  if (!shouldStartMinimized) {
     mainWindow.show()
+  } else {
+    mainWindow.hide()
   }
-})
+}
+
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', () => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore()
+        mainWindow.focus()
+      }
+      mainWindow.show()
+      mainWindow.focus()
+    }
+  })
+}
 
 function createWindow(): void {
   const lastWindowState: any = config.get('lastWindowState')
@@ -99,10 +89,10 @@ function createWindow(): void {
   mainWindow.loadURL('https://mail.google.com')
 
   mainWindow.webContents.on('dom-ready', () => {
-    log.info("Node Version: ", process.versions.node);
-    log.info("Electron Version: ", process.versions.electron);
-    log.info("Chromium Version:", process.versions.chrome);
-    displayMainWindow();
+    log.info('Node Version: ', process.versions.node)
+    log.info('Electron Version: ', process.versions.electron)
+    log.info('Chromium Version:', process.versions.chrome)
+    displayMainWindow()
   })
 
   mainWindow.on('close', e => {
@@ -111,6 +101,22 @@ function createWindow(): void {
       mainWindow.blur()
       mainWindow.hide()
     }
+  })
+
+  mainWindow.on('hide', () => {
+    trayContextMenu.getMenuItemById('show-win').enabled = true
+    trayContextMenu.getMenuItemById('show-win').visible = true
+    trayContextMenu.getMenuItemById('hide-win').enabled = false
+    trayContextMenu.getMenuItemById('hide-win').visible = false
+    tray.setContextMenu(trayContextMenu)
+  })
+
+  mainWindow.on('show', () => {
+    trayContextMenu.getMenuItemById('show-win').enabled = false
+    trayContextMenu.getMenuItemById('show-win').visible = false
+    trayContextMenu.getMenuItemById('hide-win').enabled = true
+    trayContextMenu.getMenuItemById('hide-win').visible = true
+    tray.setContextMenu(trayContextMenu)
   })
 
   ipc.on('unread-count', (_: any, unreadCount: number) => {
@@ -132,40 +138,24 @@ function createMailto(url: string): void {
   )
 }
 
-function addCustomCSS(windowElement: BrowserWindow): void {
-  if (!config.get('customStyles')) {
-    return
-  }
-
-  windowElement.webContents.insertCSS(
-    fs.readFileSync(path.join(__dirname, '..', 'css', 'style.css'), 'utf8')
-  )
-
-  const platformCSSFile = path.join(
-    __dirname,
-    '..',
-    'css',
-    `style.${platform}.css`
-  )
-  if (fs.existsSync(platformCSSFile)) {
-    windowElement.webContents.insertCSS(
-      fs.readFileSync(platformCSSFile, 'utf8')
-    )
-  }
-}
-
 ipc.on('online-status-changed', (_event: any, status: string) => {
-  log.info("Online Status Changed")
+  log.info('Online Status Changed')
   log.info(status)
-  if (status === "online"){
-    mainWindow.reload();
+  if (status === 'online') {
+    mainWindow.reload()
   }
 })
 
 app.on('ready', () => {
-  
-  onlineStatusWindow = new BrowserWindow({ width: 0, height: 0, show: false, webPreferences: {nodeIntegration: true} });
-  onlineStatusWindow.loadURL(`file://${__dirname}/../extras/html/online_status.html`)
+  onlineStatusWindow = new BrowserWindow({
+    width: 0,
+    height: 0,
+    show: false,
+    webPreferences: { nodeIntegration: true }
+  })
+  onlineStatusWindow.loadURL(
+    `file://${__dirname}/../extras/html/online_status.html`
+  )
 
   createWindow()
 
@@ -182,41 +172,44 @@ app.on('ready', () => {
     ]
 
     if (is.linux) {
-      contextMenuTemplate.unshift({
-        click: () => {
-          mainWindow.show()
+      contextMenuTemplate.unshift(
+        {
+          label: 'Show',
+          click: function() {
+            mainWindow.show()
+          },
+          enabled: false,
+          id: 'show-win'
         },
-        label: 'Show'
-      },
-      {
-        label: ('Hide'),
-        visible: !config.get("startminimized"), // Show this option on start
-        click: function () {
-          mainWindow.hide();
+        {
+          label: 'Hide',
+          click: function() {
+            mainWindow.hide()
+          },
+          id: 'hide-win'
+        },
+        {
+          type: 'separator'
+        },
+        // {
+        //   label: "Options",
+        //   click: global.settings.init
+        // },
+        {
+          type: 'separator'
         }
-      },
-      {
-        type: "separator"
-      },
-      // {
-      //   label: "Options",
-      //   click: global.settings.init
-      // },
-      {
-        type: "separator"
-      },
-      // {
-      //   label: "About",
-      //   click: global.about.init
-      // }
+        // {
+        //   label: "About",
+        //   click: global.about.init
+        // }
       )
     }
 
-    const contextMenu = Menu.buildFromTemplate(contextMenuTemplate)
+    trayContextMenu = Menu.buildFromTemplate(contextMenuTemplate)
 
     tray = new Tray(iconPath)
     tray.setToolTip(appName)
-    tray.setContextMenu(contextMenu)
+    tray.setContextMenu(trayContextMenu)
     tray.on('click', () => {
       mainWindow.show()
     })
@@ -225,7 +218,7 @@ app.on('ready', () => {
   const { webContents } = mainWindow
 
   webContents.on('dom-ready', () => {
-    displayMainWindow();
+    displayMainWindow()
   })
 
   webContents.on('new-window', (event: any, url, _1, _2, options) => {
@@ -251,10 +244,6 @@ app.on('ready', () => {
         y: null
       })
 
-      event.newGuest.webContents.on('dom-ready', () => {
-        addCustomCSS(event.newGuest)
-      })
-
       event.newGuest.webContents.on(
         'new-window',
         (event: Event, url: string) => {
@@ -275,7 +264,7 @@ app.on('open-url', (event, url) => {
 })
 
 app.on('activate', () => {
-  displayMainWindow();
+  displayMainWindow()
 })
 
 app.on('before-quit', () => {
