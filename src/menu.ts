@@ -50,11 +50,9 @@ const menuTemplate: any[] = [
         label: `Reload`,
         role: 'reload',
         accelerator: 'CommandOrControl+R',
-        click: function() {
-          let mainWindow = BrowserWindow.getAllWindows()[0];
-          if (mainWindow) {
-            mainWindow.reload()
-          }
+        click() {
+          let mainWindow = BrowserWindow.getAllWindows()[0]
+          mainWindow.reload()
         }
       },
       {
@@ -74,7 +72,11 @@ const menuTemplate: any[] = [
     submenu: [
       {
         label: `About`,
-        role: 'about'
+        role: 'about',
+        click() {
+          let mainWindow = BrowserWindow.getAllWindows()[0]
+          mainWindow.webContents.send('display_about_window');
+        }
       },
 
       {

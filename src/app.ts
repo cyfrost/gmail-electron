@@ -26,7 +26,7 @@ app.setAppUserModelId('io.cheung.gmail-desktop')
 
 let mainWindow: BrowserWindow
 let onlineStatusWindow: BrowserWindow
-let aboutWindow: BrowserWindow
+let aboutWindow: any;
 let replyToWindow: BrowserWindow
 let isQuitting = false
 let tray: Tray
@@ -113,6 +113,10 @@ function createWindow(): void {
     trayContextMenu.getMenuItemById('hide-win').enabled = true
     trayContextMenu.getMenuItemById('hide-win').visible = true
     tray.setContextMenu(trayContextMenu)
+  })
+
+  ipc.on('display_about_window', () => {
+    displayAppAbout()
   })
 
   ipc.on('unread-count', (_: any, unreadCount: number) => {
@@ -223,6 +227,8 @@ app.on('ready', () => {
     displayMainWindow()
   })
 
+
+
   webContents.on('new-window', (event: any, url, _1, _2, options) => {
     event.preventDefault()
 
@@ -262,7 +268,7 @@ app.on('ready', () => {
 
 function displayAppAbout() {
   
-  if (aboutWindow !== undefined){
+  if (aboutWindow !== null && aboutWindow !== undefined){
     aboutWindow.show();
   }
   else{
@@ -279,6 +285,7 @@ function displayAppAbout() {
     }
     })
   }
+  aboutWindow.on('close', () => { aboutWindow = null; });
   aboutWindow.loadURL(`file://${__dirname}/../extras/html/about.html`);
   aboutWindow.setMenu(null)
   aboutWindow.setMenuBarVisibility(false)
