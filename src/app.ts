@@ -20,6 +20,8 @@ import { init as initDebug } from './debug'
 import menu from './menu'
 import { platform, getUrlAccountId } from './helpers'
 
+const shouldStartMinimized = app.commandLine.hasSwitch('start-minimized');
+
 // Initialize the debug mode handler when starting the app
 initDebug()
 
@@ -48,6 +50,15 @@ let tray: Tray
 
 if (!app.requestSingleInstanceLock()) {
   app.quit()
+}
+
+function displayMainWindow(){
+  if (!shouldStartMinimized){
+    mainWindow.show();
+  }
+  else{
+    mainWindow.hide();
+  }
 }
 
 app.on('second-instance', () => {
@@ -91,6 +102,7 @@ function createWindow(): void {
     log.info("Node Version: ", process.versions.node);
     log.info("Electron Version: ", process.versions.electron);
     log.info("Chromium Version:", process.versions.chrome);
+    displayMainWindow();
   })
 
   mainWindow.on('close', e => {
@@ -213,7 +225,7 @@ app.on('ready', () => {
   const { webContents } = mainWindow
 
   webContents.on('dom-ready', () => {
-    mainWindow.show()
+    displayMainWindow();
   })
 
   webContents.on('new-window', (event: any, url, _1, _2, options) => {
@@ -263,7 +275,7 @@ app.on('open-url', (event, url) => {
 })
 
 app.on('activate', () => {
-  mainWindow.show()
+  displayMainWindow();
 })
 
 app.on('before-quit', () => {
