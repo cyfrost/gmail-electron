@@ -1,10 +1,14 @@
 # Gmail
 
-Gmail desktop app made for Linux, and Windows. Built using [Electron](https://github.com/electron/electron).
+Gmail desktop app made for Linux, and Windows.
 
-![Gmail Desktop Screenshot](src/assets/screenshot.png)
+This app was built using [Electron](https://github.com/electron/electron).
 
-## Features
+This repo is just a private fork of [this another repo](https://github.com/timche/gmail-desktop).
+
+![Gmail Screenshot](src/assets/screenshot.png)
+
+# Features
 
 - Untouched Gmail UI/UX
 - Works on both Windows, and Linux (with dedicated packages for most distros).

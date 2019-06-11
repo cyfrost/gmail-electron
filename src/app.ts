@@ -118,7 +118,7 @@ function createWindow(): void {
   ipc.on('unread-count', (_: any, unreadCount: number) => {
     if ((is.linux || is.windows) && tray) {
       const icon = unreadCount ? 'tray-icon-unread.png' : 'tray-icon.png'
-      const iconPath = path.join(__dirname, 'assets', icon)
+      const iconPath = path.join(__dirname, '..', 'src', 'assets', icon)
       tray.setImage(iconPath)
     }
   })
@@ -162,7 +162,7 @@ app.on('ready', () => {
 
   if ((is.linux || is.windows) && !tray) {
     const appName = app.getName()
-    const iconPath = path.join(__dirname, '..', 'static', 'tray-icon.png')
+    const iconPath = path.join(__dirname, '..', 'src', 'assets', 'tray-icon.png')
 
     const contextMenuTemplate: MenuItemConstructorOptions[] = [
       {
@@ -203,7 +203,6 @@ app.on('ready', () => {
         // }
       )
     }
-
     trayContextMenu = Menu.buildFromTemplate(contextMenuTemplate)
 
     tray = new Tray(iconPath)
