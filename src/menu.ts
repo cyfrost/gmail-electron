@@ -1,7 +1,7 @@
 import { app, BrowserWindow, shell, Menu } from 'electron'
 import config from './config'
 
-const darwinMenu: any[] = [
+const menuTemplate: any[] = [
   {
     label: 'File',
     submenu: [
@@ -106,5 +106,5 @@ const darwinMenu: any[] = [
   }
 ]
 
-const menu = Menu.buildFromTemplate(darwinMenu)
+const menu = Menu.buildFromTemplate(menuTemplate)
 export default menu

@@ -2,7 +2,7 @@
   "name": "Gmail",
   "productName": "Gmail",
   "version": "3.1.0",
-  "description": "Gmail desktop client for Linux, Windows, and macOS",
+  "description": "Gmail desktop client for Linux, Windows",
   "private": true,
   "repository": "cyfrost/gmail-electron",
   "author": "Tim Cheung <tim@cheung.io>",
@@ -18,7 +18,7 @@
     "type-check": "tsc --noEmit",
     "start": "tsc && electron .",
     "pack": "tsc && electron-builder --dir",
-    "dist": "tsc && electron-builder --macos --linux --windows --publish never"
+    "dist": "tsc && electron-builder --linux --windows --publish never"
   },
   "dependencies": {
     "electron-context-menu": "^0.12.1",
@@ -99,10 +99,6 @@
       "**/*"
     ],
     "appId": "io.cheung.gmail",
-    "mac": {
-      "category": "public.app-category.productivity",
-      "darkModeSupport": false
-    },
     "linux": {
       "target": [
         "deb",
