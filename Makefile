@@ -15,7 +15,7 @@ env:
 
 .PHONY: update
 update:
-	@ncu -u && npm install && npm install && printf "\nAll dependencies have been updated successfully!\n\n"
+	@ncu -u && npm install && printf "\nAll dependencies have been updated successfully!\n\n"
 
 .PHONY: build-rpm
 build-rpm:
@@ -52,10 +52,6 @@ build-all:
 .PHONY: run
 run:
 	@npm start
-
-.PHONY: set-version
-set-version:
-	@npm version $(VERSION)
 
 .PHONY: clean
 clean:

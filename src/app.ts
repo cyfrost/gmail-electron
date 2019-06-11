@@ -118,7 +118,7 @@ function createWindow(): void {
   ipc.on('unread-count', (_: any, unreadCount: number) => {
     if ((is.linux || is.windows) && tray) {
       const icon = unreadCount ? 'tray-icon-unread.png' : 'tray-icon.png'
-      const iconPath = path.join(__dirname, '..', 'static', icon)
+      const iconPath = path.join(__dirname, 'assets', icon)
       tray.setImage(iconPath)
     }
   })
