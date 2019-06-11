@@ -1,7 +1,6 @@
 import * as fs from 'fs'
 import * as Store from 'electron-store'
 import * as oldConfig from 'electron-settings'
-import { is } from 'electron-util'
 
 export interface LastWindowState {
   bounds: {
@@ -25,14 +24,12 @@ const defaults = {
     fullscreen: false,
     maximized: true
   } as unknown) as LastWindowState,
-  minimalMode: false,
   debugMode: false,
-  customStyles: false
 }
 
 const config = new Store({
   defaults,
-  name: is.development ? 'config.dev' : 'config'
+  name: 'config'
 })
 
 // @TODO: Remove `electron-settings` in future version

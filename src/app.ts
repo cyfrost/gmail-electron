@@ -14,14 +14,10 @@ import * as electronDl from 'electron-dl'
 import * as electronContextMenu from 'electron-context-menu'
 
 import config from './config'
-import { init as initDebug } from './debug'
 import menu from './menu'
 import { getUrlAccountId } from './helpers'
 
 const shouldStartMinimized = app.commandLine.hasSwitch('start-minimized')
-
-// Initialize the debug mode handler when starting the app
-initDebug()
 
 electronDl({ showBadge: false })
 electronContextMenu({ showCopyImageAddress: true, showSaveImageAs: true })
@@ -160,6 +156,9 @@ app.on('ready', () => {
   createWindow()
 
   Menu.setApplicationMenu(menu)
+
+  mainWindow.setMenuBarVisibility(false);
+  mainWindow.setAutoHideMenuBar(true);
 
   if ((is.linux || is.windows) && !tray) {
     const appName = app.getName()

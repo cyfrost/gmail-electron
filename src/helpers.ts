@@ -8,7 +8,6 @@ export function getUrlAccountId(url: string): null | string {
 }
 
 export const platform = electronUtils.platform({
-  macos: 'macos',
   linux: 'linux',
   windows: 'windows'
 })

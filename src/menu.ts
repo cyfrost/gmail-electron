@@ -1,74 +1,13 @@
 import { app, shell, Menu } from 'electron'
-import { is } from 'electron-util'
-
 import config from './config'
-import { showRestartDialog } from './utils'
-import { setMinimalMode } from './minimal-mode'
-
-const APP_NAME = app.getName()
+import { getMainWindow } from './utils'
 
 const darwinMenu: any[] = [
   {
-    label: APP_NAME,
+    label: 'File',
     submenu: [
       {
-        label: `About ${APP_NAME}`,
-        role: 'about'
-      },
-      {
-        label: `Hide ${APP_NAME}`,
-        accelerator: 'Cmd+H',
-        role: 'hide'
-      },
-      {
-        label: 'Hide Others',
-        accelerator: 'Cmd+Shift+H',
-        role: 'hideothers'
-      },
-      {
-        label: 'Show All',
-        role: 'unhide'
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: `Quit ${APP_NAME}`,
-        accelerator: 'Cmd+Q',
-        click() {
-          app.quit()
-        }
-      }
-    ]
-  },
-  {
-    label: 'Settings',
-    submenu: [
-      {
-        label: 'Appearance',
-        submenu: [
-          {
-            label: 'Custom styles',
-            type: 'checkbox',
-            checked: config.get('customStyles'),
-            click(checked: boolean) {
-              config.set('customStyles', checked)
-              showRestartDialog(checked, 'custom styles')
-            }
-          },
-          {
-            label: 'Minimal Mode',
-            type: 'checkbox',
-            checked: config.get('minimalMode'),
-            click(checked: boolean) {
-              config.set('minimalMode', checked)
-              setMinimalMode(checked)
-            }
-          }
-        ]
-      },
-      {
-        label: 'Default Mailto Client',
+        label: 'Set as default mailto client',
         type: 'checkbox',
         checked: app.isDefaultProtocolClient('mailto'),
         click() {
@@ -80,71 +19,51 @@ const darwinMenu: any[] = [
         }
       },
       {
-        label: 'Debug Mode',
-        type: 'checkbox',
-        checked: config.get('debugMode'),
-        click(checked: boolean) {
-          config.set('debugMode', checked)
-          showRestartDialog(checked, 'debug mode')
-        }
-      }
-    ]
-  },
-  {
-    label: 'Edit',
-    submenu: [
-      {
-        label: 'Undo Typing',
-        accelerator: 'Cmd+Z',
-        role: 'undo'
+        type: 'separator'
       },
       {
-        label: 'Redo',
-        accelerator: 'Shift+Cmd+Z',
-        role: 'redo'
+        label: 'Clear app data and restart',
+        click() {
+          // Clear app config
+          config.clear()
+          // Restart without firing quitting events
+          app.relaunch()
+          app.exit(0)
+        }
       },
       {
         type: 'separator'
       },
       {
-        label: 'Cut',
-        accelerator: 'Cmd+X',
-        role: 'cut'
-      },
-      {
-        label: 'Copy',
-        accelerator: 'Cmd+C',
-        role: 'copy'
-      },
-      {
-        label: 'Paste',
-        accelerator: 'Cmd+V',
-        role: 'paste'
-      },
-      {
-        label: 'Paste and Match Style',
-        accelerator: 'Shift+Cmd+V',
-        role: 'pasteAndMatchStyle'
-      },
-      {
-        label: 'Select All',
-        accelerator: 'Cmd+A',
-        role: 'selectAll'
+        label: 'Quit',
+        accelerator: 'CommandOrControl+Shift+Q',
+        click() {
+          app.quit()
+        }
       }
     ]
   },
   {
-    label: 'Window',
-    role: 'window',
+    label: 'View',
+    role: 'view',
     submenu: [
       {
+        label: `Reload`,
+        accelerator: 'CommandOrControl+R',
+        click: function() {
+          let mainWindow = getMainWindow()
+          if (mainWindow) {
+            mainWindow.reload()
+          }
+        }
+      },
+      {
         label: 'Minimize',
-        accelerator: 'Cmd+M',
         role: 'minimize'
       },
       {
         label: 'Close',
-        accelerator: 'Cmd+W',
+        accelerator: 'escape',
         role: 'close'
       }
     ]
@@ -154,41 +73,38 @@ const darwinMenu: any[] = [
     role: 'help',
     submenu: [
       {
-        label: `${APP_NAME} Website`,
+        label: `About`,
+        role: 'about'
+      },
+
+      {
+        type: 'separator'
+      },
+      {
+        label: `Check for updates`,
         click() {
-          shell.openExternal('https://github.com/timche/gmail-desktop')
+          shell.openExternal(
+            'https://github.com/cyfrost/gmail-electron/releases'
+          )
         }
       },
       {
-        label: 'Report an Issue',
+        label: `Visit GitHub repo`,
+        click() {
+          shell.openExternal('https://github.com/cyfrost/gmail-electron')
+        }
+      },
+      {
+        label: 'Report a problem',
         click() {
           shell.openExternal(
-            'https://github.com/timche/gmail-desktop/issues/new/choose'
+            'https://github.com/cyfrost/gmail-electron/issues/new/choose'
           )
         }
       }
     ]
   }
 ]
-
-// Add the develop menu when running in the development environment
-if (is.development) {
-  darwinMenu.splice(-1, 0, {
-    label: 'Develop',
-    submenu: [
-      {
-        label: 'Clear Cache and Restart',
-        click() {
-          // Clear app config
-          config.clear()
-          // Restart without firing quitting events
-          app.relaunch()
-          app.exit(0)
-        }
-      }
-    ]
-  })
-}
 
 const menu = Menu.buildFromTemplate(darwinMenu)
 export default menu
