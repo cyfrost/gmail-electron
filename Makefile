@@ -11,11 +11,11 @@ error:
 
 .PHONY: env
 env:
-	@npm install && printf "\nAll dependencies have been installed successfully!\n\n"
+	@yarn && printf "\nAll dependencies have been installed successfully!\n\n"
 
 .PHONY: update
 update:
-	@ncu -u && npm install && printf "\nAll dependencies have been updated successfully!\n\n"
+	@ncu -u && yarn && printf "\nAll dependencies have been updated successfully!\n\n"
 
 .PHONY: build-rpm
 build-rpm:
@@ -51,7 +51,7 @@ build-all:
 
 .PHONY: run
 run:
-	@npm start
+	@yarn start
 
 .PHONY: clean
 clean:
