@@ -1,12 +1,43 @@
-# Gmail
+# Gmail Electron
 
-Gmail desktop app made for Linux, and Windows.
+This is a Gmail desktop app made for Linux, and Windows.
 
-This app was built using [Electron](https://github.com/electron/electron).
+It supports being started minimized to Tray, displays push notifications for all emails, can act as an email handler, and much more.
 
-This repo is just a private fork of [this another repo](https://github.com/timche/gmail-desktop).
+This app was built using [Electron](https://github.com/electron/electron) framework.
+
+## Disclaimer: This project is a fork of the [Gmail Desktop project](https://github.com/timche/gmail-desktop).
+
+
+## Motivation for this fork
+
+I'd initially planned to build Gmail electron from scratch, but thanks to Open Source and contributors from around the world, I found [this brilliant project](https://github.com/timche/gmail-desktop) that already did *everything* I'd wanted. I wanted to customize the app to my liking which won't necessarily be appreciated/accepted upstream, read on to find out what's different with this fork from upstream.
 
 ![Gmail Screenshot](src/assets/screenshot.png)
+
+## Differences between this project and upstream
+
+### 1. Always up-to-date app dependencies (including Electron)
+For better or for worse, I always tend to keep the app dependencies up-to-date. For people that say "too new software could break stuff", I like placing emphasis on building software that isn't so *easily* broken because the dependent libs are updated.
+
+### 2. Dropped all support (code and builds) for macOS
+As said, this fork is heavily customized to my liking; Since I do not use a Mac in any of my workflows, removing the code and traces related to darwin only paves for better maintenance.
+
+### 3. More native packages for more distros
+This project provides app packages for distros that use either of `.deb`, `.rpm`, `.pacman`, `.snap`, and `.AppImage`. Windows is also supported via the NSIS installer package `.exe`.
+
+### 4. Codebase and development consistencies/inconsistencies
+The codebase was *fully* converted to ES6 (this didn't come without few build errors ;)). All the code that I don't deem useful for my use-case (darwin-related traces, custom styling code, AppMenu components that weren't feature complete, and more) has been removed. lots of refactoring and cleanup as well. A Makefile was added as a bootstrap to quickly get started with development and builds (so you could simply do `git clone` and run `make env`, `make run`, and `make build-all` as a one-shot workflow). Unfortunately, I had to remove the travis CI integration that upstream had, this will soon be re-added.
+
+### 5. Handles network change-detection
+When the network goes down, and comes back up, you'll notice the upstream app won't reconnect to Gmail servers. This fork includes handling code for that, on connection back online, the window will refresh.
+
+### 6. Minor features: Start Minimized in Tray, and an About window.
+Support for Starting Minmized to Tray was added recently, and also a handy About window acccessible via the Tray context menu that lists out some information about the app including project links, and debug info..
+
+#### A big open-source hug to upstream for this app, that has allowed me to customize it to my liking, and I'll keep maintaining this fork by including fixes and improvements from upstream, updating dependencies and more.
+
+PS: the reason this fork isn't a pull-request is, there are way too many changes that *won't* necessarily be accepted upstream. This doesn't have to be a PR because it's not meant to be. What this is, is, just a fork thats tasted to my liking, you can do your own too :)
 
 # Features
 
@@ -15,7 +46,9 @@ This repo is just a private fork of [this another repo](https://github.com/timch
 - Native push notifications for new email. 
 - Unread badge in Windows/Linux tray.
 - Useful keyboard shortcuts and nifty Tray icon indicator.
-- Always up-to-date underlying technologies and dependencies.
+- Start minimized to Tray.
+- Network detection - refresh and keep alive when network goes down, and comes back up.
+- Always up-to-date app dependencies.
 
 # Download
 
