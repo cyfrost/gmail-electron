@@ -1,17 +1,19 @@
 # Gmail Electron
 
-This is a Gmail desktop app made for Linux, and Windows.
+This project provides the Gmail web app as a native desktop application.
 
-It supports being started minimized to Tray, displays push notifications for all emails, can act as an email handler, and much more.
+It supports push notifications for all new mails, has a Tray icon, can start minimized to tray, and much more.
+
+Supported platforms are: most Linux distros and most Windows versions.
 
 This app was built using [Electron](https://github.com/electron/electron) framework.
 
-## Disclaimer: This project is a fork of the [Gmail Desktop project](https://github.com/timche/gmail-desktop).
+### Disclaimer: This project is an actively-maintained fork of the [Gmail Desktop project](https://github.com/timche/gmail-desktop).
 
 
 ## Motivation for this fork
 
-I'd initially planned to build Gmail electron from scratch, but thanks to Open Source and contributors from around the world, I found [this brilliant project](https://github.com/timche/gmail-desktop) that already did *everything* I'd wanted. I wanted to customize the app to my liking which won't necessarily be appreciated/accepted upstream, read on to find out what's different with this fork from upstream.
+I'd initially planned to build Gmail electron from scratch, but thanks to Open Source and contributors from around the world, I found [this brilliant project](https://github.com/timche/gmail-desktop) that already did *everything* I'd wanted. I didn't like a few things and wanted to change them, hence the fork and no PR.
 
 ![Gmail Screenshot](src/assets/screenshot.png)
 
@@ -21,7 +23,7 @@ I'd initially planned to build Gmail electron from scratch, but thanks to Open S
 For better or for worse, I always tend to keep the app dependencies up-to-date. For people that say "too new software could break stuff", I like placing emphasis on building software that isn't so *easily* broken because the dependent libs are updated.
 
 ### 2. Dropped all support (code and builds) for macOS
-As said, this fork is heavily customized to my liking; Since I do not use a Mac in any of my workflows, removing the code and traces related to darwin only paves for better maintenance.
+As said, this fork is heavily customized to my liking; Since I do not use a Mac in any of my workflows (yet), removing the code and traces related to darwin only paves for better maintenance.
 
 ### 3. More native packages for more distros
 This project provides app packages for distros that use either of `.deb`, `.rpm`, `.pacman`, `.snap`, and `.AppImage`. Windows is also supported via the NSIS installer package `.exe`.
@@ -41,10 +43,10 @@ PS: the reason this fork isn't a pull-request is, there are way too many changes
 
 # Features
 
-- Untouched Gmail UI/UX
+- Stock and untouched Gmail UI/UX
 - Works on both Windows, and Linux (with dedicated packages for most distros).
 - Native push notifications for new email. 
-- Unread badge in Windows/Linux tray.
+- Unread mails indicator (Colored icon for unread / Greyish icon for inbox 0) in Windows/Linux tray.
 - Useful keyboard shortcuts and nifty Tray icon indicator.
 - Start minimized to Tray.
 - Network detection - refresh and keep alive when network goes down, and comes back up.
@@ -58,11 +60,13 @@ For distros using APT (Debian and Ubuntu +/ derivatives): get the `.deb` package
 
 For DNF based distros (Fedora, RHEL, CentOS, SuSE): get the `.rpm` package from [releases page](https://github.com/cyfrost/gmail-electron/releases/latest).
 
+For Arch and derivatives: get the `.pacman` package from [releases page](https://github.com/cyfrost/gmail-electron/releases/latest).
+
 `.AppImage` for everyone else.
 
 ## Windows
 
-For Windows 7 and above, get the latest `.exe` file from [releases page](https://github.com/cyfrost/gmail-electron/releases/latest) and install it normally.
+For Windows 7 and above, get the latest `.exe` file from [releases page](https://github.com/cyfrost/gmail-electron/releases/latest) and install it normally by opening it.
 
 
 # Build Instructions
@@ -71,9 +75,11 @@ The build process is very simple:
 
 1. Clone the repo using `$ git clone https://github.com/cyfrost/gmail-electron`.
 
-2. Install project dependencies by running `$ make env` in project root directory.
+2. Install project dependencies by running `$ make env` in project root directory (NodeJS is a prerequisite).
 
-3.  Now, to run the app, you can do `$ make run` in the project root directory (or `$ npm run start`).
+3.  To start the app (and debug any changes), you can do `$ make run` in the project root directory (or `$ npm run start`).
+
+4. (Optional) To update the app dependencies, do `$ make update`.
 
 ## Building Distribution Packages
 
@@ -87,18 +93,20 @@ After making your changes, you can simply use any of the below commands to build
 6. Run `$ make build-linux` to build both `.DEB` and `.RPM` packages.
 7. Run `$ make build-all` to build packages for both Windows and Linux (basically all the above).
 
-# Contributing
+## Contributing
 
 No rules for contributing, Just send a PR :)
 
-# Maintainer
+## Maintainer
 
 - [Cyrus Frost](https://github.com/cyfrost)
 
-# License
+The original authors of the upstream project are different, see [here](https://github.com/timche/gmail-desktop) for more info.
+
+## License
 
 MIT license. Copyright © 2019 Tim Cheung
 
-# Disclaimer
+## Disclaimer
 
-Gmail Desktop is a community-built open-source app that relies on open-source technologies and is in no way affiliated/endorsed by Google.
+Gmail Electron (provided by this project) is a community-built open-source app that relies on open-source technologies and is in no way affiliated with or endorsed by Google.
