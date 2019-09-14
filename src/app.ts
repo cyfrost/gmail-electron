@@ -10,8 +10,9 @@ import {
 } from 'electron'
 import { is } from 'electron-util'
 import * as log from 'electron-log'
-import * as electronDl from 'electron-dl'
 import * as electronContextMenu from 'electron-context-menu'
+import { init as initDownloads } from './download'
+import { init as initAutoUpdates, checkForUpdates } from './updater'
 
 import config from './config'
 import menu from './menu'
@@ -19,7 +20,8 @@ import { getUrlAccountId } from './helpers'
 
 const shouldStartMinimized = app.commandLine.hasSwitch('start-minimized')
 
-electronDl({ showBadge: false })
+initDownloads();
+initAutoUpdates();
 electronContextMenu({ showCopyImageAddress: true, showSaveImageAs: true })
 
 app.setAppUserModelId('io.cheung.gmail-desktop')
@@ -197,18 +199,14 @@ app.on('ready', () => {
         id: 'hide-win'
       },
       {
-        type: 'separator'
+        label: `Check for updates`,
+        click() {
+          checkForUpdates()
+        }
       },
       {
         label: 'About',
         click: displayAppAbout
-      },
-      // {
-      //   label: "Options",
-      //   click: global.settings.init
-      // },
-      {
-        type: 'separator'
       }
     )
     trayContextMenu = Menu.buildFromTemplate(contextMenuTemplate)

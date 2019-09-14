@@ -13,6 +13,10 @@ export interface LastWindowState {
   maximized: boolean
 }
 
+export enum ConfigKey {
+  AutoUpdate = 'autoUpdate'
+}
+
 const defaults = {
   lastWindowState: ({
     bounds: {
@@ -25,6 +29,7 @@ const defaults = {
     maximized: true
   } as unknown) as LastWindowState,
   debugMode: false,
+  autoUpdate: true
 }
 
 const config = new Store({
@@ -43,11 +48,6 @@ function migrate(): void {
   if (oldConfig.has('debug-mode')) {
     const debugMode = (oldConfig.get('debug-mode') as unknown) as boolean
     config.set('debugMode', debugMode)
-  }
-
-  if (oldConfig.has('minimal-mode')) {
-    const minimalMode = (oldConfig.get('minimal-mode') as unknown) as boolean
-    config.set('minimalMode', minimalMode)
   }
 
   fs.unlinkSync(oldConfigFile)
