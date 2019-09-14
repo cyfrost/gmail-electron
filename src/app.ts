@@ -20,15 +20,15 @@ import { getUrlAccountId } from './helpers'
 
 const shouldStartMinimized = app.commandLine.hasSwitch('start-minimized')
 
-initDownloads();
-initAutoUpdates();
+initDownloads()
+initAutoUpdates()
 electronContextMenu({ showCopyImageAddress: true, showSaveImageAs: true })
 
 app.setAppUserModelId('io.cheung.gmail-desktop')
 
 let mainWindow: BrowserWindow
 let onlineStatusWindow: BrowserWindow
-let aboutWindow: any;
+let aboutWindow: any
 let replyToWindow: BrowserWindow
 let isQuitting = false
 let tray: Tray
@@ -225,8 +225,6 @@ app.on('ready', () => {
     displayMainWindow()
   })
 
-
-
   webContents.on('new-window', (event: any, url, _1, _2, options) => {
     event.preventDefault()
 
@@ -265,26 +263,26 @@ app.on('ready', () => {
 })
 
 function displayAppAbout() {
-  
-  if (aboutWindow !== null && aboutWindow !== undefined){
-    aboutWindow.show();
-  }
-  else{
+  if (aboutWindow !== null && aboutWindow !== undefined) {
+    aboutWindow.show()
+  } else {
     aboutWindow = new BrowserWindow({
-    title: 'About ' + app.getName(),
-    width: 570,
-    height: 680,
-    resizable: false,
-    center: true,
-    frame: true,
-    webPreferences: {
-      nodeIntegration: true,
-      nativeWindowOpen: true
-    }
+      title: 'About ' + app.getName(),
+      width: 570,
+      height: 680,
+      resizable: false,
+      center: true,
+      frame: true,
+      webPreferences: {
+        nodeIntegration: true,
+        nativeWindowOpen: true
+      }
     })
   }
-  aboutWindow.on('close', () => { aboutWindow = null; });
-  aboutWindow.loadURL(`file://${__dirname}/../extras/html/about.html`);
+  aboutWindow.on('close', () => {
+    aboutWindow = null
+  })
+  aboutWindow.loadURL(`file://${__dirname}/../extras/html/about.html`)
   aboutWindow.setMenu(null)
   aboutWindow.setMenuBarVisibility(false)
   aboutWindow.show()

@@ -87,7 +87,7 @@ const menuTemplate: any[] = [
         role: 'about',
         click() {
           let mainWindow = BrowserWindow.getAllWindows()[0]
-          mainWindow.webContents.send('display_about_window');
+          mainWindow.webContents.send('display_about_window')
         }
       },
 

@@ -39,15 +39,13 @@ export function init(): void {
 }
 
 export async function checkForUpdates(): Promise<void> {
-
-
   if (platform() === 'linux') {
     dialog.showMessageBox({
       type: 'info',
       buttons: ['OK'],
       message: 'Automatic updates for this app are not supported on Linux yet.'
     })
-    return;
+    return
   }
 
   try {

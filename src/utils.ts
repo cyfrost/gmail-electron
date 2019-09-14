@@ -15,20 +15,16 @@ export function showRestartDialog(enabled: boolean, name: string): void {
   const state = enabled ? 'enable' : 'disable'
 
   const msgOptions: MessageBoxOptions = {
-      type: 'info',
-      buttons: ['Restart', 'Cancel'],
-      message: 'Restart required',
-      detail: `To ${state} ${name}, please restart ${app.getName()}`
+    type: 'info',
+    buttons: ['Restart', 'Cancel'],
+    message: 'Restart required',
+    detail: `To ${state} ${name}, please restart ${app.getName()}`
   }
 
-  dialog.showMessageBox(getMainWindow(), msgOptions).then(
-    (response: any) => {
-        if (response === 0) {
-            app.relaunch()
-            app.quit()
-          }
-      }
-  );
-
-
+  dialog.showMessageBox(getMainWindow(), msgOptions).then((response: any) => {
+    if (response === 0) {
+      app.relaunch()
+      app.quit()
+    }
+  })
 }
