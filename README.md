@@ -1,49 +1,36 @@
-# Gmail Electron
+# Gmail Desktop
 
-This project provides the Gmail web app as a native desktop application.
+This project provides the Gmail desktop application which supports Linux and Windows.
 
-It supports push notifications for all new mails, has a Tray icon, can start minimized to tray, and much more.
+Features overview: push notifications for all new mails, has a Tray icon, can auto-start minimized to system tray, and more.
 
-Supported platforms are: most Linux distros and most Windows versions.
+This app was built using the [ElectronJS](https://github.com/electron/electron) framework.
 
-This app was built using [Electron](https://github.com/electron/electron) framework.
-
-### Disclaimer: This project is an actively-maintained fork of the [Gmail Desktop project](https://github.com/timche/gmail-desktop).
-
-
-## Motivation for this fork
-
-I'd initially planned to build Gmail electron from scratch, but thanks to Open Source and contributors from around the world, I found [this brilliant project](https://github.com/timche/gmail-desktop) that already did *everything* I'd wanted. I didn't like a few things and wanted to change them, hence the fork and no PR.
+#### Disclaimer: This project is an actively-maintained fork of the [Gmail Desktop project](https://github.com/timche/gmail-desktop).
 
 ![Gmail Screenshot](src/assets/screenshot.png)
 
-## Differences between this project and upstream
+### Motivation behind this fork
 
-### 1. Always up-to-date app dependencies (including Electron)
-For better or for worse, I always tend to keep the app dependencies up-to-date. For people that say "too new software could break stuff", I like placing emphasis on building software that isn't so *easily* broken because the dependent libs are updated.
+Initially set out to make an electron wrapper myself, thanks to FOSS, I found [this brilliant project](https://github.com/timche/gmail-desktop). There are a few things I wished were different about it to make it more suited to my workflow. Implementing those changes may not be feasible for the upstream project. So I forked it, made my changes and am maintaining it for myself.
 
-### 2. Dropped all support (code and builds) for macOS
-As said, this fork is heavily customized to my liking; Since I do not use a Mac in any of my workflows (yet), removing the code and traces related to darwin only paves for better maintenance.
 
-### 3. More native packages for more distros
-This project provides app packages for distros that use either of `.deb`, `.rpm`, `.pacman`, `.snap`, and `.AppImage`. Windows is also supported via the NSIS installer package `.exe`.
+## Differences from upstream project
 
-### 4. Codebase and development consistencies/inconsistencies
-The codebase was *fully* converted to ES6 (this didn't come without few build errors ;)). All the code that I don't deem useful for my use-case (darwin-related traces, custom styling code, AppMenu components that weren't feature complete, and more) has been removed. lots of refactoring and cleanup as well. A Makefile was added as a bootstrap to quickly get started with development and builds (so you could simply do `git clone` and run `make env`, `make run`, and `make build-all` as a one-shot workflow). Unfortunately, I had to remove the travis CI integration that upstream had, this will soon be re-added.
+The following are whats different about this project compared to the upstream project.
 
-### 5. Handles network change-detection
-When the network goes down, and comes back up, you'll notice the upstream app won't reconnect to Gmail servers. This fork includes handling code for that, on connection back online, the window will refresh.
-
-### 6. Minor features: Start Minimized in Tray, and an About window.
-Support for Starting Minmized to Tray was added recently, and also a handy About window acccessible via the Tray context menu that lists out some information about the app including project links, and debug info..
-
-#### A big open-source hug to upstream for this app, that has allowed me to customize it to my liking, and I'll keep maintaining this fork by including fixes and improvements from upstream, updating dependencies and more.
-
-PS: the reason this fork isn't a pull-request is, there are way too many changes that *won't* necessarily be accepted upstream. This doesn't have to be a PR because it's not meant to be. What this is, is, just a fork thats tasted to my liking, you can do your own too :)
+1. Updated app dependencies (including Electron)
+2. Implemented support for detecting network connection drops and reconnect, when a connection is re-established, Gmail will refresh itself to avoid missing out on push notifcations (This particular feature is missing from upstream project, I will soon send a PR)
+3. Removed support for macOS builds of this app as I do not use a Mac in my workflows
+4. More app packages (.deb, .rpm, .pacman, .snap, .AppImage, .exe)
+5. Codebase related changes: convert to es6 syntax, removed defunct/dead code, refactored some methods (mostly typing)
+6. Removed custom styling code since I prefer the stock UI of Gmail (using custom styles may very rarely cause issues, for instance, when Gmail change their stylesheets and co)
+7. Removed travis CI pipelines since this repo doesn't have integration hooks setup yet (will soon be re-added)
+8. Added an About App window with some decorations to view app info (version, links, etc.)
 
 # Features
 
-- Stock and untouched Gmail UI/UX
+- Stock Gmail UI
 - Works on both Windows, and Linux (with dedicated packages for most distros).
 - Native push notifications for new email. 
 - Unread mails indicator (Colored icon for unread / Greyish icon for inbox 0) in Windows/Linux tray.
@@ -51,6 +38,7 @@ PS: the reason this fork isn't a pull-request is, there are way too many changes
 - Start minimized to Tray.
 - Network detection - refresh and keep alive when network goes down, and comes back up.
 - Always up-to-date app dependencies.
+- Automatic updates.
 
 # Download
 
@@ -62,7 +50,7 @@ For DNF based distros (Fedora, RHEL, CentOS, SuSE): get the `.rpm` package from 
 
 For Arch and derivatives: get the `.pacman` package from [releases page](https://github.com/cyfrost/gmail-electron/releases/latest).
 
-`.AppImage` for everyone else.
+`.AppImage` or `.snap` for everyone else.
 
 ## Windows
 
@@ -101,7 +89,7 @@ No rules for contributing, Just send a PR :)
 
 - [Cyrus Frost](https://github.com/cyfrost)
 
-The original authors of the upstream project are different, see [here](https://github.com/timche/gmail-desktop) for more info.
+The original authors of this project are different, see [here](https://github.com/timche/gmail-desktop) for more info.
 
 ## License
 
