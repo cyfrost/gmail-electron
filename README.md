@@ -28,6 +28,7 @@ The following are whats different about this project compared to the upstream pr
 7. Removed travis CI pipelines since this repo doesn't have integration hooks setup yet (will soon be re-added)
 8. Added an About App window with some decorations to view app info (version, links, etc.)
 9. The menu bar is hidden by default and can be made visible by hitting the `Alt` key.
+10. Removed ability to inject custom CSS (this, along with no custom styling, will prevent customization but not all people want it).
 
 # Features
 
