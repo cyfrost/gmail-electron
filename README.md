@@ -27,6 +27,7 @@ The following are whats different about this project compared to the upstream pr
 6. Removed custom styling code since I prefer the stock UI of Gmail (using custom styles may very rarely cause issues, for instance, when Gmail change their stylesheets and co)
 7. Removed travis CI pipelines since this repo doesn't have integration hooks setup yet (will soon be re-added)
 8. Added an About App window with some decorations to view app info (version, links, etc.)
+9. The menu bar is hidden by default and can be made visible by hitting the `Alt` key.
 
 # Features
 
