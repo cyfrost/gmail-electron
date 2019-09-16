@@ -19,10 +19,9 @@ Initially set out to make an electron wrapper myself, thanks to FOSS, I found [t
 
 The following are whats different about this project compared to the upstream project.
 
-1. Updated app dependencies (including Electron)
+1. Updated app dependencies
 2. Implemented support for detecting network connection drops and reconnect, when a connection is re-established, Gmail will refresh itself to avoid missing out on push notifcations (This particular feature is missing from upstream project, I will soon send a PR)
 3. Removed support for macOS builds of this app as I do not use a Mac in my workflows
-4. More app packages (.deb, .rpm, .pacman, .snap, .AppImage, .exe)
 5. Codebase related changes: convert to es6 syntax, removed defunct/dead code, refactored some methods (mostly typing)
 6. Removed custom styling code since I prefer the stock UI of Gmail (using custom styles may very rarely cause issues, for instance, when Gmail change their stylesheets and co)
 7. Removed travis CI pipelines since this repo doesn't have integration hooks setup yet (will soon be re-added)
