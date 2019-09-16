@@ -19,27 +19,26 @@ Initially set out to make an electron wrapper myself, thanks to FOSS, I found [t
 
 The following are whats different about this project compared to the upstream project.
 
-1. Updated app dependencies
-2. Implemented support for detecting network connection drops and reconnect, when a connection is re-established, Gmail will refresh itself to avoid missing out on push notifcations (This particular feature is missing from upstream project, I will soon send a PR)
-3. Removed support for macOS builds of this app as I do not use a Mac in my workflows
+1. Updated app dependencies.
+2. Added support for handling network connection reset events; when network goes down and comes back up, Gmail will refresh itself to avoid missing out on push notifications.
+3. Removed support for macOS builds and all related code since I do not use a Mac in any of my workflows.
 5. Codebase related changes: convert to es6 syntax, removed defunct/dead code, refactored some methods (mostly typing)
-6. Removed custom styling code since I prefer the stock UI of Gmail (using custom styles may very rarely cause issues, for instance, when Gmail change their stylesheets and co)
-7. Removed travis CI pipelines since this repo doesn't have integration hooks setup yet (will soon be re-added)
+6. Reverted all custom styles made by upstream (using custom styles may very rarely cause issues, for instance, when Gmail changes their stylesheets).
+7. Removed travis CI pipelines since this repo doesn't have integration hooks setup yet (will soon be re-added).
 8. Added an About App window with some decorations to view app info (version, links, etc.)
 9. The menu bar is hidden by default and can be made visible by hitting the `Alt` key.
-10. Removed ability to inject custom CSS (this, along with no custom styling, will prevent customization but not all people want it).
+10. Removed ability to inject custom CSS (this, along with no app-provided styles, will sadly prevent customization but not all people want it).
+11. Supports "Start as Minimized" feature (can be triggered in autostart via `gmail --start-minimized`)
 
 # Features
 
 - Stock Gmail UI
-- Works on both Windows, and Linux (with dedicated packages for most distros).
-- Native push notifications for new email. 
-- Unread mails indicator (Colored icon for unread / Greyish icon for inbox 0) in Windows/Linux tray.
-- Useful keyboard shortcuts and nifty Tray icon indicator.
-- Start minimized to Tray.
-- Network detection - refresh and keep alive when network goes down, and comes back up.
-- Always up-to-date app dependencies.
-- Automatic updates.
+- Native push notifications for new email
+- Unread mails indicator
+- Start minimized to Tray
+- Network detection - refresh and keep alive when network goes down, and comes back up
+- Always up-to-date app dependencies
+- Automatic updates
 
 # Download
 
