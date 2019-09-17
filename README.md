@@ -19,16 +19,15 @@ Initially set out to make an electron wrapper myself, thanks to FOSS, I found [t
 
 The following are whats different about this project compared to the upstream project.
 
-1. Updated app dependencies.
-2. Added support for handling network connection reset events; when network goes down and comes back up, Gmail will refresh itself to avoid missing out on push notifications.
-3. Removed support for macOS builds and all related code since I do not use a Mac in any of my workflows.
-5. Codebase related changes: convert to es6 syntax, removed defunct/dead code, refactored some methods (mostly typing)
-6. Reverted all custom styles made by upstream (using custom styles may very rarely cause issues, for instance, when Gmail changes their stylesheets).
-7. Removed travis CI pipelines since this repo doesn't have integration hooks setup yet (will soon be re-added).
-8. Added an About App window with some decorations to view app info (version, links, etc.)
-9. The menu bar is hidden by default and can be made visible by hitting the `Alt` key.
-10. Removed ability to inject custom CSS (this, along with no app-provided styles, will sadly prevent customization but not all people want it).
-11. Supports "Start as Minimized" feature (can be triggered in autostart via `gmail --start-minimized`)
+1. Added support for handling network connection reset events; when network goes down and comes back up, Gmail will refresh itself to avoid missing out on push notifications.
+1. Removed support for macOS builds and all related code since I do not use a Mac in any of my workflows.
+1. Codebase related changes: convert to es6 syntax, removed defunct/dead code, refactored some methods (mostly typing)
+1. Reverted all custom styles made by upstream (using custom styles may very rarely cause issues, for instance, when Gmail changes their stylesheets).
+1. Removed travis CI pipelines since this repo doesn't have integration hooks setup yet (will soon be re-added).
+1. Added an About App window with some decorations to view app info (version, links, etc.)
+1. The menu bar is hidden by default and can be made visible by hitting the `Alt` key.
+1. Removed ability to inject custom CSS (this, along with no app-provided styles, will sadly prevent customization but not all people want it).
+1. Supports "Start as Minimized" feature (can be triggered in autostart via `gmail --start-minimized`)
 
 # Features
 
