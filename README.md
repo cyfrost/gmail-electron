@@ -19,42 +19,38 @@ Initially set out to make an electron wrapper myself, thanks to FOSS, I found [t
 
 The following are whats different about this project compared to the upstream project.
 
-1. Added support for handling network connection reset events; when network goes down and comes back up, Gmail will refresh itself to avoid missing out on push notifications.
-1. Removed support for macOS builds and all related code since I do not use a Mac in any of my workflows.
-1. Codebase related changes: convert to es6 syntax, removed defunct/dead code, refactored some methods (mostly typing)
-1. Reverted all custom styles made by upstream (using custom styles may very rarely cause issues, for instance, when Gmail changes their stylesheets).
-1. Removed travis CI pipelines since this repo doesn't have integration hooks setup yet (will soon be re-added).
-1. Added an About App window with some decorations to view app info (version, links, etc.)
-1. The menu bar is hidden by default and can be made visible by hitting the `Alt` key.
-1. Removed ability to inject custom CSS (this, along with no app-provided styles, will sadly prevent customization but not all people want it).
-1. Supports "Start as Minimized" feature (can be triggered in autostart via `gmail --start-minimized`)
+* Added rudimentary support for handling network reset events; Gmail will refresh itself when there's a network change to avoid missing out on push notifications (Test/repro scenario: wake from S3 and you should see Gmail refreshing itself).
+* Dropped all (code + builds) related to macOS since I do not use a Mac in any of my workflows.
+* Reverted all custom styles made by upstream; no css will be changed at all.
+* Removed ability to inject custom CSS (this + above change are done to prevent any rare issues that stem from modifying 3rd party stylesheets. For instance, when gmail changes their css vars and co.; This sacrifices customization but I can live without it :)).
+* Removed travis CI pipelines since this repo doesn't have integration hooks setup yet (will soon be re-added).
+* \[meh\] Added a decorated About App page accessible via Tray icon > About.
+* The menu bar is hidden by default and can be made visible by hitting the `Alt` key, this is ephemeral and not preserved.
+* Supports "Start as Minimized" feature (can be triggered in autostart via `gmail --start-minimized`)
 
 # Features
 
-- Stock Gmail UI
-- Native push notifications for new email
-- Unread mails indicator
-- Start minimized to Tray
-- Network detection - refresh and keep alive when network goes down, and comes back up
-- Always up-to-date app dependencies
-- Automatic updates
+Mostly the same features as upstream app (excepting those related to macOS and custom styling), plus:
+
+* \[minor/meh\] Start as minimzed (nice to have it though)
+* Supports refreshing self on network changes to avoid missing push notifications
+* \[minor/meh\] a fancy-yet-almost-useless About page
 
 # Download
 
-## Linux
+## GNU/Linux
 
-For distros using APT (Debian and Ubuntu +/ derivatives): get the `.deb` package from [releases page](https://github.com/cyfrost/gmail-electron/releases/latest).
+For APT based distros (Debian/+ derivatives): get the `.deb` package from [here](https://github.com/cyfrost/gmail-electron/releases/latest).
 
-For DNF based distros (Fedora, RHEL, CentOS, SuSE): get the `.rpm` package from [releases page](https://github.com/cyfrost/gmail-electron/releases/latest).
+For DNF based distros (Fedora, RHEL, CentOS, SuSE): get the `.rpm` package from [here](https://github.com/cyfrost/gmail-electron/releases/latest).
 
-For Arch and derivatives: get the `.pacman` package from [releases page](https://github.com/cyfrost/gmail-electron/releases/latest).
+For Arch and derivatives: get the `.pacman` package from [here](https://github.com/cyfrost/gmail-electron/releases/latest).
 
 `.AppImage` or `.snap` for everyone else.
 
 ## Windows
 
-For Windows 7 and above, get the latest `.exe` file from [releases page](https://github.com/cyfrost/gmail-electron/releases/latest) and install it normally by opening it.
-
+For Windows 7 and above, get the latest `.exe` file from [here](https://github.com/cyfrost/gmail-electron/releases/latest) and install it normally by running it. There are no configurable options in the installer.
 
 # Build Instructions
 
@@ -64,7 +60,7 @@ The build process is very simple:
 
 2. Install project dependencies by running `$ make env` in project root directory (NodeJS is a prerequisite).
 
-3.  To start the app (and debug any changes), you can do `$ make run` in the project root directory (or `$ npm run start`).
+3. To start the app (and debug any changes), do `$ make run` in the project root directory (or `$ npm run start`).
 
 4. (Optional) To update the app dependencies, do `$ make update`.
 
@@ -86,14 +82,12 @@ No rules for contributing, Just send a PR :)
 
 ## Maintainer
 
-- [Cyrus Frost](https://github.com/cyfrost)
-
-The original authors of this project are different, see [here](https://github.com/timche/gmail-desktop) for more info.
+I maintain this fork for just myself, but all credits to @timche and @markpython for making the upstream app so useful. Read more about them [here](https://github.com/timche/gmail-desktop#maintainers).
 
 ## License
 
-MIT license. Copyright © 2019 Tim Cheung
+[Inherited from upstream](https://github.com/timche/gmail-desktop/blob/master/LICENSE), no changes.
 
 ## Disclaimer
 
-Gmail Electron (provided by this project) is a community-built open-source app that relies on open-source technologies and is in no way affiliated with or endorsed by Google.
+The Gmail app provided by this "forked" project is a community-built open-source app that relies on open-source technologies for its functionalities and is in no way affiliated with or endorsed by Google.
