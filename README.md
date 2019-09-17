@@ -1,21 +1,20 @@
 # Gmail Desktop
 
-This project provides the Gmail desktop application which supports Linux and Windows.
+This project provides the Gmail web app as a native desktop application (for Windows and Linux only).
 
-Features overview: push notifications for all new mails, has a Tray icon, can auto-start minimized to system tray, and more.
+This app was built using the open-source [Electron.js](https://github.com/electron/electron) framework.
 
-This app was built using the [ElectronJS](https://github.com/electron/electron) framework.
+# Disclaimer
 
-#### Disclaimer: This project is an actively-maintained fork of the [Gmail Desktop project](https://github.com/timche/gmail-desktop).
+This project is an actively-maintained fork of the [Gmail Desktop project](https://github.com/timche/gmail-desktop).
 
-![Gmail Screenshot](src/assets/screenshot.png)
+### Motivation behind the fork
 
-### Motivation behind this fork
+I'd wanted a Gmail desktop app that supports Linux, has Push notifications, and a Tray icon. A little hunt found me [this brilliant project](https://github.com/timche/gmail-desktop), thanks to FOSS.
 
-Initially set out to make an electron wrapper myself, thanks to FOSS, I found [this brilliant project](https://github.com/timche/gmail-desktop). There are a few things I wished were different about it to make it more suited to my workflow. Implementing those changes may not be feasible for the upstream project. So I forked it, made my changes and am maintaining it for myself.
+There are a few things I wished were different about it just to make it more suited to my workflow. Implementing some of those changes may not be feasible upstream. Hence this fork, which caters to only my needs.
 
-
-## Differences from upstream project
+# Differences from upstream project
 
 The following are whats different about this project compared to the upstream project.
 
@@ -30,11 +29,11 @@ The following are whats different about this project compared to the upstream pr
 
 # Features
 
-Mostly the same features as upstream app (excepting those related to macOS and custom styling), plus:
+Most features inherited from upstream (excepting those related to macOS and custom styling), plus:
 
-* \[minor/meh\] Start as minimzed (nice to have it though)
 * Supports refreshing self on network changes to avoid missing push notifications
 * \[minor/meh\] a fancy-yet-almost-useless About page
+* \[minor/meh\] Start as minimzed (nice to have it though)
 
 # Download
 
@@ -82,7 +81,7 @@ No rules for contributing, Just send a PR :)
 
 ## Maintainer
 
-I maintain this fork for just myself, but all credits to @timche and @markpython for making the upstream app so useful. Read more about them [here](https://github.com/timche/gmail-desktop#maintainers).
+I maintain this fork for just myself, but all credits to @timche and @markpython for originally starting and maintaining the upstream app. Read more about it [here](https://github.com/timche/gmail-desktop#maintainers).
 
 ## License
 
