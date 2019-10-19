@@ -1,7 +1,6 @@
 DIST_DIR=dist
-VERSION=2.9.2
 
-DEPENDENCIES = node npm rpmbuild
+DEPENDENCIES = node npm yarn rpmbuild
 K := $(foreach exec,$(DEPENDENCIES), $(if $(shell which "$(exec)"),dependencies_ok,$(error Command Not Found: "$(exec)")))
 
 # Default target executed on error.
@@ -56,6 +55,10 @@ run:
 .PHONY: clean
 clean:
 	@rm -rf $(DIST_DIR) && printf "\nBuild artifacts (from './$(DIST_DIR)') have been deleted successfully!\n\n"
+
+.PHONY: clean-env
+clean-env:
+	@rm -rf node_modules yarn.lock $(DIST_DIR) && printf "\nCleanup OK!\n\n"
 
 .PHONY: list
 list:

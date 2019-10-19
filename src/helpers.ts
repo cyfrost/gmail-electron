@@ -6,8 +6,3 @@ export function getUrlAccountId(url: string): null | string {
   const res = accountIdRegExp.exec(url)
   return res && res[1]
 }
-
-export const platform = electronUtils.platform({
-  linux: 'linux',
-  windows: 'windows'
-})

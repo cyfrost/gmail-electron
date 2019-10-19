@@ -1,8 +1,6 @@
 import { app, BrowserWindow, shell, Menu } from 'electron'
-import config, { ConfigKey } from './config'
-import { checkForUpdates } from './updater'
-import { viewLogs } from './logs'
-import { showRestartDialog } from './utils'
+import config from './config'
+
 
 const menuTemplate: any[] = [
   {
@@ -35,15 +33,6 @@ const menuTemplate: any[] = [
       },
       {
         type: 'separator'
-      },
-      {
-        label: 'Enable automatic updates',
-        type: 'checkbox',
-        checked: config.get(ConfigKey.AutoUpdate) as boolean,
-        click({ checked }: { checked: boolean }) {
-          config.set(ConfigKey.AutoUpdate, checked)
-          showRestartDialog(checked, 'auto updates')
-        }
       },
       {
         label: 'Quit',
@@ -95,21 +84,9 @@ const menuTemplate: any[] = [
         type: 'separator'
       },
       {
-        label: `Check for updates`,
-        click() {
-          checkForUpdates()
-        }
-      },
-      {
         label: `Visit GitHub repo`,
         click() {
           shell.openExternal('https://github.com/cyfrost/gmail-electron')
-        }
-      },
-      {
-        label: 'View Logs',
-        click() {
-          viewLogs()
         }
       },
       {

@@ -1,4 +1,4 @@
-import * as path from 'path'
+import * as path from "path";
 import {
   app,
   ipcMain as ipc,
@@ -7,61 +7,74 @@ import {
   Menu,
   Tray,
   MenuItemConstructorOptions
-} from 'electron'
-import { is } from 'electron-util'
-import * as log from 'electron-log'
-import * as electronContextMenu from 'electron-context-menu'
-import { init as initDownloads } from './download'
-import { init as initAutoUpdates, checkForUpdates } from './updater'
+} from "electron";
+import * as log from "electron-log";
+import * as electronContextMenu from "electron-context-menu";
+import { init as initDownloads } from "./download";
+import config from "./config";
+import menu from "./menu";
+import { getUrlAccountId } from "./helpers";
 
-import config from './config'
-import menu from './menu'
-import { getUrlAccountId } from './helpers'
+let mainWindow: BrowserWindow;
+let onlineStatusWindow: BrowserWindow;
+let aboutWindow: any;
+let replyToWindow: BrowserWindow;
+let isQuitting = false;
+let tray: Tray;
+let trayContextMenu: any;
+const shouldStartMinimized = app.commandLine.hasSwitch("start-minimized");
 
-const shouldStartMinimized = app.commandLine.hasSwitch('start-minimized')
+init();
 
-initDownloads()
-initAutoUpdates()
-electronContextMenu({ showCopyImageAddress: true, showSaveImageAs: true })
+function init() {
+  validateSingleInstance();
+  app.setAppUserModelId("com.cyfrost.gmail");
+  initDownloads();
+  electronContextMenu({
+    showCopyImageAddress: true,
+    showSaveImageAs: true
+  });
+  registerIPCHandlers();
 
-app.setAppUserModelId('io.cheung.gmail-desktop')
+  app.on("open-url", (event, url) => {
+    event.preventDefault();
+    createMailto(url);
+  });
 
-let mainWindow: BrowserWindow
-let onlineStatusWindow: BrowserWindow
-let aboutWindow: any
-let replyToWindow: BrowserWindow
-let isQuitting = false
-let tray: Tray
-let trayContextMenu: any
+  app.on("before-quit", () => {
+    isQuitting = true;
+    config.set("lastWindowState", {
+      bounds: mainWindow.getBounds(),
+      fullscreen: mainWindow.isFullScreen(),
+      maximized: mainWindow.isMaximized()
+    });
+  });
 
-function displayMainWindow() {
-  if (!shouldStartMinimized) {
-    mainWindow.show()
+  app.on("ready", initGmail);
+}
+
+function validateSingleInstance() {
+  const gotTheLock = app.requestSingleInstanceLock();
+
+  if (!gotTheLock) {
+    app.quit();
   } else {
-    mainWindow.hide()
+    app.on("second-instance", () => {
+      mainWindow.show();
+    });
   }
 }
 
-const gotTheLock = app.requestSingleInstanceLock()
-
-if (!gotTheLock) {
-  app.quit()
-} else {
-  app.on('second-instance', () => {
-    // Someone tried to run a second instance, we should focus our window.
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) {
-        mainWindow.restore()
-        mainWindow.focus()
-      }
-      mainWindow.show()
-      mainWindow.focus()
-    }
-  })
+function displayMainWindow() {
+  if (!shouldStartMinimized) {
+    mainWindow.show();
+  } else {
+    mainWindow.hide();
+  }
 }
 
 function createWindow(): void {
-  const lastWindowState: any = config.get('lastWindowState')
+  const lastWindowState: any = config.get("lastWindowState");
 
   mainWindow = new BrowserWindow({
     title: app.getName(),
@@ -71,205 +84,191 @@ function createWindow(): void {
     y: lastWindowState.bounds.y,
     webPreferences: {
       nodeIntegration: false,
-      nativeWindowOpen: true,
-      preload: path.join(__dirname, 'preload')
+      nativeWindowOpen: true
     }
-  })
+  });
 
   if (lastWindowState.fullscreen && !mainWindow.isFullScreen()) {
-    mainWindow.setFullScreen(lastWindowState.fullscreen)
+    mainWindow.setFullScreen(lastWindowState.fullscreen);
   }
 
   if (lastWindowState.maximized && !mainWindow.isMaximized()) {
-    mainWindow.maximize()
+    mainWindow.maximize();
   }
 
-  mainWindow.loadURL('https://mail.google.com')
+  mainWindow.loadURL("https://mail.google.com");
 
-  mainWindow.webContents.on('dom-ready', () => {
-    log.info('Node Version: ', process.versions.node)
-    log.info('Electron Version: ', process.versions.electron)
-    log.info('Chromium Version:', process.versions.chrome)
-    displayMainWindow()
-  })
-
-  mainWindow.on('close', e => {
+  mainWindow.on("close", e => {
     if (!isQuitting) {
-      e.preventDefault()
-      mainWindow.blur()
-      mainWindow.hide()
+      e.preventDefault();
+      mainWindow.blur();
+      mainWindow.hide();
     }
-  })
+  });
 
-  mainWindow.on('hide', () => {
-    trayContextMenu.getMenuItemById('show-win').enabled = true
-    trayContextMenu.getMenuItemById('show-win').visible = true
-    trayContextMenu.getMenuItemById('hide-win').enabled = false
-    trayContextMenu.getMenuItemById('hide-win').visible = false
-    tray.setContextMenu(trayContextMenu)
-  })
+  mainWindow.on("hide", () => toggleAppVisiblityTrayItem(false));
+  mainWindow.on("show", () => toggleAppVisiblityTrayItem(true));
+}
 
-  mainWindow.on('show', () => {
-    trayContextMenu.getMenuItemById('show-win').enabled = false
-    trayContextMenu.getMenuItemById('show-win').visible = false
-    trayContextMenu.getMenuItemById('hide-win').enabled = true
-    trayContextMenu.getMenuItemById('hide-win').visible = true
-    tray.setContextMenu(trayContextMenu)
-  })
-
-  ipc.on('display_about_window', () => {
-    displayAppAbout()
-  })
-
-  ipc.on('unread-count', (_: any, unreadCount: number) => {
-    if ((is.linux || is.windows) && tray) {
-      const icon = unreadCount ? 'tray-icon-unread.png' : 'tray-icon.png'
-      const iconPath = path.join(__dirname, '..', 'src', 'assets', icon)
-      tray.setImage(iconPath)
-    }
-  })
+function toggleAppVisiblityTrayItem(isMainWindowVisible: boolean): void {
+  trayContextMenu.getMenuItemById(
+    "show-win"
+  ).visible = !isMainWindowVisible;
+  trayContextMenu.getMenuItemById(
+    "hide-win"
+  ).visible = isMainWindowVisible;
+  tray.setContextMenu(trayContextMenu);
 }
 
 function createMailto(url: string): void {
   replyToWindow = new BrowserWindow({
     parent: mainWindow
-  })
+  });
 
   replyToWindow.loadURL(
     `https://mail.google.com/mail/?extsrc=mailto&url=${url}`
-  )
+  );
 }
 
-ipc.on('online-status-changed', (_event: any, status: string) => {
-  log.info('Online Status Changed')
-  log.info(status)
-  if (status === 'online') {
-    mainWindow.reload()
-  }
-})
+function registerIPCHandlers() {
+  ipc.on("online-status-changed", (_event: any, status: string) => {
+    log.info("Network change detected: now " + status);
+    const icon =
+      status === "online"
+        ? "tray-icon-unread.png"
+        : "tray-icon.png";
+    const iconPath = path.join(__dirname, "../src/assets/", icon);
+    tray.setImage(iconPath);
+  });
 
-app.on('ready', () => {
+  ipc.on("display_about_window", () => {
+    displayAppAbout();
+  });
+}
+
+function loadNetworkChangeHandler() {
   onlineStatusWindow = new BrowserWindow({
     width: 0,
     height: 0,
     show: false,
     webPreferences: { nodeIntegration: true }
-  })
+  });
+
   onlineStatusWindow.loadURL(
-    `file://${__dirname}/../extras/html/online_status.html`
-  )
+    `file://${__dirname}/../src/assets/OnlineStatus.html`
+  );
+}
 
-  createWindow()
+function setAppMenus() {
+  Menu.setApplicationMenu(menu);
+  mainWindow.setMenuBarVisibility(false);
+  mainWindow.setAutoHideMenuBar(true);
+}
 
-  Menu.setApplicationMenu(menu)
+function initGmail() {
+  loadNetworkChangeHandler();
+  createWindow();
+  setAppMenus();
+  createTray();
 
-  mainWindow.setMenuBarVisibility(false)
-  mainWindow.setAutoHideMenuBar(true)
+  mainWindow.webContents.on(
+    "did-finish-load",
+    onGmailLoadingFinishedHandler
+  );
 
-  if (!tray) {
-    const appName = app.getName()
-    const iconPath = path.join(
-      __dirname,
-      '..',
-      'src',
-      'assets',
-      'tray-icon.png'
-    )
+  mainWindow.webContents.on("new-window", (event, url, _1, _2, options) =>
+    onNewWindowEventHandler(event, url, _1, _2, options)
+  );
+}
 
-    const contextMenuTemplate: MenuItemConstructorOptions[] = [
-      {
-        role: 'quit'
-      }
-    ]
+function onGmailLoadingFinishedHandler() {
+  let loggerOutput =
+    "Successfully finished loading Gmail...\n\nDebug Info:\n============\nNode: " +
+    process.versions.node +
+    "\nElectron: " +
+    process.versions.electron +
+    "\nChromium: " +
+    process.versions.chrome +
+    "\n\n";
+  log.info(loggerOutput);
+  tray.setImage(
+    path.join(__dirname, "../src/assets/tray-icon-unread.png")
+  );
+  displayMainWindow();
+}
 
-    contextMenuTemplate.unshift(
-      {
-        label: 'Show',
-        click: function() {
-          mainWindow.show()
-        },
-        enabled: false,
-        id: 'show-win'
-      },
-      {
-        label: 'Hide',
-        click: function() {
-          mainWindow.hide()
-        },
-        id: 'hide-win'
-      },
-      {
-        label: `Check for updates`,
-        click() {
-          checkForUpdates()
-        }
-      },
-      {
-        label: 'About',
-        click: displayAppAbout
-      }
-    )
-    trayContextMenu = Menu.buildFromTemplate(contextMenuTemplate)
-
-    tray = new Tray(iconPath)
-    tray.setToolTip(appName)
-    tray.setContextMenu(trayContextMenu)
-    tray.on('click', () => {
-      mainWindow.show()
-    })
-  }
-
-  const { webContents } = mainWindow
-
-  webContents.on('dom-ready', () => {
-    displayMainWindow()
-  })
-
-  webContents.on('new-window', (event: any, url, _1, _2, options) => {
-    event.preventDefault()
-
-    // `Add account` opens `accounts.google.com`
-    if (/^https:\/\/accounts\.google\.com/.test(url)) {
-      mainWindow.loadURL(url)
-    } else if (/^https:\/\/mail\.google\.com/.test(url)) {
-      // Check if the user switches accounts which is determined
-      // by the URL: `mail.google.com/mail/u/<local_account_id>/...`
-      const currentAccountId = getUrlAccountId(mainWindow.webContents.getURL())
-      const targetAccountId = getUrlAccountId(url)
-
-      if (targetAccountId !== currentAccountId) {
-        return mainWindow.loadURL(url)
-      }
-
-      // Center the new window on the screen
-      event.newGuest = new BrowserWindow({
-        ...options,
-        x: null,
-        y: null
-      })
-
-      event.newGuest.webContents.on(
-        'new-window',
-        (event: Event, url: string) => {
-          event.preventDefault()
-          shell.openExternal(url)
-        }
-      )
-    } else {
-      shell.openExternal(url)
+function onNewWindowEventHandler(event, url, _1, _2, options) {
+  event.preventDefault();
+  if (/^https:\/\/accounts\.google\.com/.test(url)) {
+    mainWindow.loadURL(url);
+  } else if (/^https:\/\/mail\.google\.com/.test(url)) {
+    const currentAccountId = getUrlAccountId(
+      mainWindow.webContents.getURL()
+    );
+    const targetAccountId = getUrlAccountId(url);
+    if (targetAccountId !== currentAccountId) {
+      return mainWindow.loadURL(url);
     }
-    return null
-  })
-})
+    event.newGuest = new BrowserWindow({
+      ...options,
+      x: null,
+      y: null
+    });
+    event.newGuest.webContents.on(
+      "new-window",
+      (event: Event, url: string) => {
+        event.preventDefault();
+        shell.openExternal(url);
+      }
+    );
+  } else {
+    shell.openExternal(url);
+  }
+  return null;
+}
+
+function createTray() {
+  const appName = app.getName();
+  const iconPath = path.join(__dirname, "../src/assets/tray-icon.png");
+
+  const contextMenuTemplate: MenuItemConstructorOptions[] = [
+    {
+      label: "Show",
+      click: () => mainWindow.show(),
+      visible: false,
+      id: "show-win"
+    },
+    {
+      label: "Hide",
+      click: () => mainWindow.hide(),
+      id: "hide-win"
+    },
+    {
+      label: "About",
+      click: displayAppAbout
+    },
+    {
+      role: "quit"
+    }
+  ];
+
+  trayContextMenu = Menu.buildFromTemplate(contextMenuTemplate);
+  tray = new Tray(iconPath);
+  tray.setToolTip(appName);
+  tray.setContextMenu(trayContextMenu);
+  tray.on("click", () => mainWindow.show());
+  tray.on("double-click", () => mainWindow.show());
+}
 
 function displayAppAbout() {
-  if (aboutWindow !== null && aboutWindow !== undefined) {
-    aboutWindow.show()
+  if (aboutWindow) {
+    aboutWindow.show();
+    return;
   } else {
     aboutWindow = new BrowserWindow({
-      title: 'About ' + app.getName(),
+      title: "About Gmail",
       width: 570,
-      height: 680,
+      height: 660,
       resizable: false,
       center: true,
       frame: true,
@@ -277,34 +276,13 @@ function displayAppAbout() {
         nodeIntegration: true,
         nativeWindowOpen: true
       }
-    })
+    });
   }
-  aboutWindow.on('close', () => {
-    aboutWindow = null
-  })
-  aboutWindow.loadURL(`file://${__dirname}/../extras/html/about.html`)
-  aboutWindow.setMenu(null)
-  aboutWindow.setMenuBarVisibility(false)
-  aboutWindow.show()
+  aboutWindow.on("close", () => {
+    aboutWindow = null;
+  });
+  aboutWindow.setMenu(null);
+  aboutWindow.setMenuBarVisibility(false);
+  aboutWindow.loadURL(`file://${__dirname}/../src/assets/about.html`);
+  aboutWindow.show();
 }
-
-app.on('open-url', (event, url) => {
-  event.preventDefault()
-  createMailto(url)
-})
-
-app.on('activate', () => {
-  displayMainWindow()
-})
-
-app.on('before-quit', () => {
-  isQuitting = true
-
-  if (mainWindow) {
-    config.set('lastWindowState', {
-      bounds: mainWindow.getBounds(),
-      fullscreen: mainWindow.isFullScreen(),
-      maximized: mainWindow.isMaximized()
-    })
-  }
-})
