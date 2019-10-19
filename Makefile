@@ -58,7 +58,7 @@ clean:
 
 .PHONY: clean-env
 clean-env:
-	@rm -rf node_modules yarn.lock $(DIST_DIR) && printf "\nCleanup OK!\n\n"
+	@rm -rf node_modules yarn.lock $(DIST_DIR) dist-js && printf "\nCleanup OK!\n\n"
 
 .PHONY: list
 list:
