@@ -44,7 +44,9 @@
       "target": [
         "deb",
         "rpm",
-        "AppImage"
+        "AppImage",
+        "pacman",
+        "tar.gz"
       ],
       "category": "Network;Office"
     },
