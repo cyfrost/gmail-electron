@@ -1,28 +1,24 @@
-import { shell, app } from 'electron'
-import * as path from 'path'
-import * as electronDl from 'electron-dl'
+import { shell, app } from 'electron';
+import * as path from 'path';
+import * as electronDl from 'electron-dl';
 
-import { createNotification } from './notification'
+import { createNotification } from './notification';
 
-type State = 'cancelled' | 'completed' | 'interrupted'
+type State = 'cancelled' | 'completed' | 'interrupted';
 
 const messages = {
   cancelled: 'has been cancelled',
   completed: 'has completed',
   interrupted: 'has been interrupted'
-}
+};
 
 function onDownloadComplete(filename: string, state: State): void {
-  createNotification(
-    `Download ${state}`,
-    `Download of file ${filename} ${messages[state]}.`,
-    {
-      action: () => {
-        shell.openItem(path.join(app.getPath('downloads'), filename))
-      },
-      text: 'Open'
-    }
-  )
+  createNotification(`Download ${state}`, `Download of file ${filename} ${messages[state]}.`, {
+    action: () => {
+      shell.openItem(path.join(app.getPath('downloads'), filename));
+    },
+    text: 'Open'
+  });
 }
 
 export function init(): void {
@@ -30,8 +26,8 @@ export function init(): void {
     showBadge: false,
     onStarted: item => {
       item.on('done', (_, state) => {
-        onDownloadComplete(item.getFilename(), state)
-      })
+        onDownloadComplete(item.getFilename(), state);
+      });
     }
-  })
+  });
 }

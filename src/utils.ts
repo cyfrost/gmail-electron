@@ -5,9 +5,5 @@ export function getMainWindow(): BrowserWindow {
 }
 
 export function sendChannelToMainWindow(channel: string, ...args: unknown[]): void {
-
-    dialog.showMessageBox(getMainWindow(), {
-        message: BrowserWindow.getAllWindows().length + ''
-    })
     getMainWindow().webContents.send(channel, ...args);
 }

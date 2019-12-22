@@ -1,16 +1,14 @@
-import { is } from 'electron-util'
-
-import Store = require('electron-store')
+import Store = require('electron-store');
 
 interface LastWindowState {
   bounds: {
-    width: number
-    height: number
-    x: number | undefined
-    y: number | undefined
-  }
-  fullscreen: boolean
-  maximized: boolean
+    width: number;
+    height: number;
+    x: number | undefined;
+    y: number | undefined;
+  };
+  fullscreen: boolean;
+  maximized: boolean;
 }
 
 export enum ConfigKey {
@@ -18,16 +16,16 @@ export enum ConfigKey {
   LaunchMinimized = 'launchMinimized',
   AutoStartOnLogin = 'autoStartOnLogin',
   AutoHideMenuBar = 'autoHideMenuBar',
-  EnableTrayIcon = 'enableTrayIcon',
+  EnableTrayIcon = 'enableTrayIcon'
 }
 
 type TypedStore = {
-  [ConfigKey.LastWindowState]: LastWindowState
-  [ConfigKey.LaunchMinimized]: boolean
-  [ConfigKey.AutoHideMenuBar]: boolean
-  [ConfigKey.AutoStartOnLogin]: boolean
-  [ConfigKey.EnableTrayIcon]: boolean
-}
+  [ConfigKey.LastWindowState]: LastWindowState;
+  [ConfigKey.LaunchMinimized]: boolean;
+  [ConfigKey.AutoHideMenuBar]: boolean;
+  [ConfigKey.AutoStartOnLogin]: boolean;
+  [ConfigKey.EnableTrayIcon]: boolean;
+};
 
 const defaults = {
   [ConfigKey.LastWindowState]: {
@@ -44,11 +42,11 @@ const defaults = {
   [ConfigKey.AutoHideMenuBar]: false,
   [ConfigKey.AutoStartOnLogin]: false,
   [ConfigKey.EnableTrayIcon]: false
-}
+};
 
 const config = new Store<TypedStore>({
   defaults,
   name: 'config'
-})
+});
 
-export default config
+export default config;

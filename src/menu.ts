@@ -1,9 +1,9 @@
-import { app, BrowserWindow, shell, Menu } from 'electron'
-import config, { ConfigKey } from './config'
-import log from 'electron-log'
-import * as main from './app'
-import { getMainWindow } from './utils'
-import * as path from "path";
+import { app, BrowserWindow, shell, Menu } from 'electron';
+import config, { ConfigKey } from './config';
+import log from 'electron-log';
+import * as main from './app';
+import { getMainWindow } from './utils';
+import * as path from 'path';
 
 const menuTemplate: any[] = [
   {
@@ -15,9 +15,9 @@ const menuTemplate: any[] = [
         checked: app.isDefaultProtocolClient('mailto'),
         click() {
           if (app.isDefaultProtocolClient('mailto')) {
-            app.removeAsDefaultProtocolClient('mailto')
+            app.removeAsDefaultProtocolClient('mailto');
           } else {
-            app.setAsDefaultProtocolClient('mailto')
+            app.setAsDefaultProtocolClient('mailto');
           }
         }
       },
@@ -28,10 +28,10 @@ const menuTemplate: any[] = [
         label: 'Clear app data and restart',
         click() {
           // Clear app config
-          config.clear()
+          config.clear();
           // Restart without firing quitting events
-          app.relaunch()
-          app.exit(0)
+          app.relaunch();
+          app.exit(0);
         }
       },
       {
@@ -41,7 +41,7 @@ const menuTemplate: any[] = [
         label: 'Quit',
         accelerator: 'CommandOrControl+Shift+Q',
         click() {
-          app.quit()
+          app.quit();
         }
       }
     ]
@@ -57,8 +57,8 @@ const menuTemplate: any[] = [
         type: 'checkbox',
         checked: config.get(ConfigKey.AutoStartOnLogin),
         click({ checked }: { checked: boolean }) {
-          config.set(ConfigKey.AutoStartOnLogin, checked)
-          checked ? main.addSelfToSystemStartup() : main.removeSelfToSystemStartup()
+          config.set(ConfigKey.AutoStartOnLogin, checked);
+          checked ? main.addSelfToSystemStartup() : main.removeSelfToSystemStartup();
         }
       },
       {
@@ -66,7 +66,7 @@ const menuTemplate: any[] = [
         type: 'checkbox',
         checked: config.get(ConfigKey.LaunchMinimized),
         click({ checked }: { checked: boolean }) {
-          config.set(ConfigKey.LaunchMinimized, checked)
+          config.set(ConfigKey.LaunchMinimized, checked);
         }
       },
       {
@@ -74,7 +74,7 @@ const menuTemplate: any[] = [
         type: 'checkbox',
         checked: config.get(ConfigKey.AutoHideMenuBar),
         click({ checked }: { checked: boolean }) {
-          config.set(ConfigKey.AutoHideMenuBar, checked)
+          config.set(ConfigKey.AutoHideMenuBar, checked);
           main.setAppMenus();
         }
       },
@@ -83,14 +83,14 @@ const menuTemplate: any[] = [
         type: 'checkbox',
         checked: config.get(ConfigKey.EnableTrayIcon),
         click({ checked }: { checked: boolean }) {
-          config.set(ConfigKey.EnableTrayIcon, checked)
+          config.set(ConfigKey.EnableTrayIcon, checked);
           checked ? main.createTray() : main.removeTrayIcon();
         }
       },
       {
         label: 'Edit Config file manually',
         click() {
-          config.openInEditor()
+          config.openInEditor();
         }
       }
     ]
@@ -104,8 +104,8 @@ const menuTemplate: any[] = [
         role: 'reload',
         accelerator: 'CommandOrControl+R',
         click() {
-          let mainWindow = BrowserWindow.getAllWindows()[0]
-          mainWindow.reload()
+          let mainWindow = BrowserWindow.getAllWindows()[0];
+          mainWindow.reload();
         }
       },
       {
@@ -128,13 +128,13 @@ const menuTemplate: any[] = [
         label: `About`,
         role: 'about',
         click() {
-          main.displayAppAbout()
+          main.showAppAbout();
         }
       },
       {
         label: 'View Logs',
         click() {
-          shell.openItem(log.transports.file.findLogPath())
+          shell.openItem(log.transports.file.findLogPath());
         }
       },
       {
@@ -143,20 +143,18 @@ const menuTemplate: any[] = [
       {
         label: `Visit GitHub repo`,
         click() {
-          shell.openExternal('https://github.com/cyfrost/gmail-electron')
+          shell.openExternal('https://github.com/cyfrost/gmail-electron');
         }
       },
       {
         label: 'Report a problem',
         click() {
-          shell.openExternal(
-            'https://github.com/cyfrost/gmail-electron/issues/new/choose'
-          )
+          shell.openExternal('https://github.com/cyfrost/gmail-electron/issues/new/choose');
         }
       }
     ]
   }
-]
+];
 
-const menu = Menu.buildFromTemplate(menuTemplate)
-export default menu
+const menu = Menu.buildFromTemplate(menuTemplate);
+export default menu;

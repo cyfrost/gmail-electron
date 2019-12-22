@@ -1,15 +1,11 @@
-import { Notification } from 'electron'
+import { Notification } from 'electron';
 
 interface Action {
-  action: () => void
-  text: string
+  action: () => void;
+  text: string;
 }
 
-export function createNotification(
-  title: string,
-  body: string,
-  { action, text: actionText }: Action
-): void {
+export function createNotification(title: string, body: string, { action, text: actionText }: Action): void {
   const notification = new Notification({
     actions: [
       {
@@ -19,8 +15,8 @@ export function createNotification(
     ],
     body,
     title
-  })
+  });
 
-  notification.on('action', () => action())
-  notification.show()
+  notification.on('action', () => action());
+  notification.show();
 }

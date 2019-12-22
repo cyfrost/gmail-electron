@@ -39,7 +39,7 @@
     "files": [
       "**/*"
     ],
-    "appId": "app.cyfrost.gmail",
+    "appId": "Gmail",
     "linux": {
       "target": [
         "deb",
