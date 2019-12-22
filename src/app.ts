@@ -11,9 +11,13 @@ import {
 import * as log from "electron-log";
 import * as electronContextMenu from "electron-context-menu";
 import { init as initDownloads } from "./download";
-import config from "./config";
+import config, { ConfigKey } from "./config";
 import menu from "./menu";
 import { getUrlAccountId } from "./helpers";
+import { getMainWindow } from "./utils";
+import { is } from "electron-util";
+const { dialog } = require('electron')
+
 
 let mainWindow: BrowserWindow;
 let onlineStatusWindow: BrowserWindow;
@@ -22,11 +26,15 @@ let replyToWindow: BrowserWindow;
 let isQuitting = false;
 let tray: Tray;
 let trayContextMenu: any;
-const shouldStartMinimized = app.commandLine.hasSwitch("start-minimized");
+const shouldStartMinimized = app.commandLine.hasSwitch("start-minimized") || app.commandLine.hasSwitch("launch-minimized") || config.get(ConfigKey.LaunchMinimized);
 
 init();
 
 function init() {
+  if (is.macos) {
+    app.quit();
+  }
+
   validateSingleInstance();
   app.setAppUserModelId("com.cyfrost.gmail");
   initDownloads();
@@ -43,7 +51,7 @@ function init() {
 
   app.on("before-quit", () => {
     isQuitting = true;
-    config.set("lastWindowState", {
+    config.set(ConfigKey.LastWindowState, {
       bounds: mainWindow.getBounds(),
       fullscreen: mainWindow.isFullScreen(),
       maximized: mainWindow.isMaximized()
@@ -74,7 +82,7 @@ function displayMainWindow() {
 }
 
 function createWindow(): void {
-  const lastWindowState: any = config.get("lastWindowState");
+  const lastWindowState: any = config.get(ConfigKey.LastWindowState);
 
   mainWindow = new BrowserWindow({
     title: app.getName(),
@@ -85,14 +93,11 @@ function createWindow(): void {
     webPreferences: {
       nodeIntegration: false,
       nativeWindowOpen: true
-    }
+    },
+    show: !shouldStartMinimized
   });
 
-  if (lastWindowState.fullscreen && !mainWindow.isFullScreen()) {
-    mainWindow.setFullScreen(lastWindowState.fullscreen);
-  }
-
-  if (lastWindowState.maximized && !mainWindow.isMaximized()) {
+  if (lastWindowState.maximized && !mainWindow.isMaximized() && !shouldStartMinimized) {
     mainWindow.maximize();
   }
 
@@ -106,11 +111,20 @@ function createWindow(): void {
     }
   });
 
+  mainWindow.on("minimize", () => toggleAppVisiblityTrayItem(false));
   mainWindow.on("hide", () => toggleAppVisiblityTrayItem(false));
   mainWindow.on("show", () => toggleAppVisiblityTrayItem(true));
 }
 
+function removeTrayIcon() {
+  tray.destroy();
+}
+
 function toggleAppVisiblityTrayItem(isMainWindowVisible: boolean): void {
+  if (!config.get(ConfigKey.EnableTrayIcon) || !tray) {
+    return;
+  }
+
   trayContextMenu.getMenuItemById(
     "show-win"
   ).visible = !isMainWindowVisible;
@@ -133,16 +147,14 @@ function createMailto(url: string): void {
 function registerIPCHandlers() {
   ipc.on("online-status-changed", (_event: any, status: string) => {
     log.info("Network change detected: now " + status);
-    const icon =
+    if (config.get(ConfigKey.EnableTrayIcon) && tray) {
+      const icon =
       status === "online"
         ? "tray-icon-unread.png"
         : "tray-icon.png";
     const iconPath = path.join(__dirname, "../src/assets/", icon);
     tray.setImage(iconPath);
-  });
-
-  ipc.on("display_about_window", () => {
-    displayAppAbout();
+    }
   });
 }
 
@@ -169,7 +181,9 @@ function initGmail() {
   loadNetworkChangeHandler();
   createWindow();
   setAppMenus();
-  createTray();
+  if (config.get(ConfigKey.EnableTrayIcon) && !tray) {
+    createTray();
+  }
 
   mainWindow.webContents.on(
     "did-finish-load",
@@ -191,9 +205,11 @@ function onGmailLoadingFinishedHandler() {
     process.versions.chrome +
     "\n\n";
   log.info(loggerOutput);
-  tray.setImage(
-    path.join(__dirname, "../src/assets/tray-icon-unread.png")
-  );
+  if (config.get(ConfigKey.EnableTrayIcon) && tray) {
+    tray.setImage(
+      path.join(__dirname, "../src/assets/tray-icon-unread.png")
+    );
+  }
   displayMainWindow();
 }
 
@@ -222,9 +238,18 @@ function onNewWindowEventHandler(event, url, _1, _2, options) {
       }
     );
   } else {
-    shell.openExternal(url);
+    shell.openExternal(cleanURLFromGoogle(url));
   }
   return null;
+}
+
+function cleanURLFromGoogle(url: string): string {
+  if (!url.includes('google.com/url')) {
+    return url
+  }
+
+  const parsedUrl = new URL(url)
+  return parsedUrl.searchParams.get('q') || url
 }
 
 function createTray() {
@@ -260,6 +285,35 @@ function createTray() {
   tray.on("double-click", () => mainWindow.show());
 }
 
+function addSelfToSystemStartup() {
+  if (is.windows) {
+    const appFolder = path.dirname(process.execPath)
+    const updateExe = path.resolve(appFolder, '..', 'Update.exe')
+    const exeName = path.basename(process.execPath)
+
+    app.setLoginItemSettings({
+      openAtLogin: true,
+      path: updateExe,
+      args: [
+        '--processStart', `"${exeName}"`
+      ]
+    })
+  } else if (is.linux) {
+
+  }
+
+
+
+}
+
+function removeSelfToSystemStartup() {
+  if (is.windows) {
+    app.setLoginItemSettings({
+      openAtLogin: false
+    })
+  }
+}
+
 function displayAppAbout() {
   if (aboutWindow) {
     aboutWindow.show();
@@ -267,8 +321,8 @@ function displayAppAbout() {
   } else {
     aboutWindow = new BrowserWindow({
       title: "About Gmail",
-      width: 570,
-      height: 660,
+      width: 490,
+      height: 630,
       resizable: false,
       center: true,
       frame: true,
@@ -286,3 +340,5 @@ function displayAppAbout() {
   aboutWindow.loadURL(`file://${__dirname}/../src/assets/about.html`);
   aboutWindow.show();
 }
+
+export { removeTrayIcon, createTray, displayAppAbout, addSelfToSystemStartup, removeSelfToSystemStartup }

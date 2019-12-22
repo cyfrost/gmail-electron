@@ -13,21 +13,18 @@
   <title>About Gmail</title>
 </head>
 <body>
-  <br>
-  <center>
-      <img src="./main_logo.png" alt="Gmail" style="width:80px;height:90px;">
-      <img src="./mascot.png" alt="Linux" style="width:75px;height:80px; margin-right: 15px;">
-      <img src="./ms.png" alt="Microsoft" style="width:60px;height:60px;">
-  </center>
-  <main class="main-container">
+  <div style="display: flex; justify-content: center; align-items: center; padding-top: 20px;">
+    <img src="./main_logo.png" alt="Gmail" style="width:80px;height:80px;">
+    <img src="./mascot.png" alt="Linux" style="width:70px;height:70px; margin-right: 15px;">
+    <img src="./ms.png" alt="Microsoft" style="width:55px;height:54px;">
+  </div>
+  <main>
       <h5 class="teal-text text-lighten-0"  style="padding-bottom: 10px; border-bottom:  0.5px solid #D3D3D3; border-width: thin;">About Gmail (v<span id="app_version_header"></span>)</h5>
       <div>
-          <p>Gmail client for Windows and Linux built using Electron.js framework. This app is an open-source wrapper implementation of the official Gmail Web App.</p>
+          <p>Gmail client for Windows and Linux built using Electron.js framework. This app is an open-source wrapper for the official Gmail Web App.</p>
           <p>Disclaimer: This app is community made and not an official product.</p>
-          <p><p class="teal-text text-lighten-0" style="font-size: 18px; font-weight: 400; padding-top: 5px; padding-bottom: 5px; border-bottom:  0.3px solid #D3D3D3; border-width: thin;">Credits</p><p>Original Author: Tim Cheung (<a href='https://github.com/timche' target="_blank">https://github.com/timche</a>)<br>Current Maintainer: Cyrus Frost (<a href='https://github.com/cyfrost' target="_blank">https://github.com/cyfrost</a>)<br>GitHub
-              Repository: visit (
-              <a href='https://github.com/cyfrost/gmail-electron' target="_blank">https://github.com/cyfrost/gmail-electron</a>)<br>Get App Updates: visit (<a href="https://github.com/cyfrost/gmail-electron/releases" target="_blank">https://github.com/cyfrost/gmail-electron/releases/latest</a>)</p>
-          
+          <p><p class="teal-text text-lighten-0" style="font-size: 18px; font-weight: 400; padding-top: 5px; padding-bottom: 5px; border-bottom:  0.3px solid #D3D3D3; border-width: thin;">Credits</p><p>Original Author: Tim Cheung (<a href='https://github.com/timche/gmail-desktop' target="_blank">https://github.com/gmail-desktop</a>)<br>Current Maintainer: Cyrus Frost (<a href='https://github.com/cyfrost/gmail-electron' target="_blank">https://github.com/cyfrost/gmail-electron</a>)</p>
+
           <p class="teal-text text-lighten-0" style="font-size: 18px; font-weight: 400; padding-top: 5px; padding-bottom: 5px; border-bottom:  0.3px solid #D3D3D3; border-width: thin;">Debug Info</p><p>App version: v<span id="app_version"></span><br> Electron Runtime: v<span id="electron_version"></span><br> Node Runtime: v<span id="node_version"></span><br> Chromium Engine: v<span id="chromium_version"></span></p>
       </div>
   </main>

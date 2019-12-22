@@ -1,8 +1,8 @@
-import * as fs from 'fs'
-import * as Store from 'electron-store'
-import * as oldConfig from 'electron-settings'
+import { is } from 'electron-util'
 
-export interface LastWindowState {
+import Store = require('electron-store')
+
+interface LastWindowState {
   bounds: {
     width: number
     height: number
@@ -13,35 +13,42 @@ export interface LastWindowState {
   maximized: boolean
 }
 
+export enum ConfigKey {
+  LastWindowState = 'lastWindowState',
+  LaunchMinimized = 'launchMinimized',
+  AutoStartOnLogin = 'autoStartOnLogin',
+  AutoHideMenuBar = 'autoHideMenuBar',
+  EnableTrayIcon = 'enableTrayIcon',
+}
+
+type TypedStore = {
+  [ConfigKey.LastWindowState]: LastWindowState
+  [ConfigKey.LaunchMinimized]: boolean
+  [ConfigKey.AutoHideMenuBar]: boolean
+  [ConfigKey.AutoStartOnLogin]: boolean
+  [ConfigKey.EnableTrayIcon]: boolean
+}
+
 const defaults = {
-  lastWindowState: ({
+  [ConfigKey.LastWindowState]: {
     bounds: {
       width: 800,
       height: 600,
-      x: undefined as number | undefined,
-      y: undefined as number | undefined
+      x: undefined,
+      y: undefined
     },
     fullscreen: false,
     maximized: true
-  } as unknown) as LastWindowState,
+  },
+  [ConfigKey.LaunchMinimized]: false,
+  [ConfigKey.AutoHideMenuBar]: false,
+  [ConfigKey.AutoStartOnLogin]: false,
+  [ConfigKey.EnableTrayIcon]: false
 }
 
-const config = new Store({
+const config = new Store<TypedStore>({
   defaults,
   name: 'config'
 })
-
-// @TODO: Remove `electron-settings` in future version
-function migrate(): void {
-  const oldConfigFile = oldConfig.file()
-
-  if (!fs.existsSync(oldConfigFile)) {
-    return
-  }
-  
-  fs.unlinkSync(oldConfigFile)
-}
-
-migrate()
 
 export default config

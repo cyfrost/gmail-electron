@@ -1,6 +1,6 @@
 import { shell, app } from 'electron'
 import * as path from 'path'
-import electronDl from 'electron-dl'
+import * as electronDl from 'electron-dl'
 
 import { createNotification } from './notification'
 

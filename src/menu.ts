@@ -1,6 +1,9 @@
 import { app, BrowserWindow, shell, Menu } from 'electron'
-import config from './config'
-
+import config, { ConfigKey } from './config'
+import log from 'electron-log'
+import * as main from './app'
+import { getMainWindow } from './utils'
+import * as path from "path";
 
 const menuTemplate: any[] = [
   {
@@ -44,8 +47,63 @@ const menuTemplate: any[] = [
     ]
   },
   {
-    label: 'View',
-    role: 'view',
+    role: 'editMenu'
+  },
+  {
+    label: 'Settings',
+    submenu: [
+      {
+        label: 'Auto-start at login',
+        type: 'checkbox',
+        checked: config.get(ConfigKey.AutoStartOnLogin),
+        click({ checked }: { checked: boolean }) {
+          config.set(ConfigKey.AutoStartOnLogin, checked)
+          checked ? main.addSelfToSystemStartup() : main.removeSelfToSystemStartup()
+        }
+      },
+      {
+        label: 'Always launch minimized',
+        type: 'checkbox',
+        checked: config.get(ConfigKey.LaunchMinimized),
+        click({ checked }: { checked: boolean }) {
+          config.set(ConfigKey.LaunchMinimized, checked)
+        }
+      },
+      {
+        label: 'Auto-hide the menu bar',
+        type: 'checkbox',
+        checked: config.get(ConfigKey.AutoHideMenuBar),
+        click({ checked }: { checked: boolean }) {
+          config.set(ConfigKey.AutoHideMenuBar, checked)
+          getMainWindow().setMenuBarVisibility(!checked)
+          getMainWindow().setAutoHideMenuBar(checked)
+        }
+      },
+      {
+        label: 'Enable Tray icon',
+        type: 'checkbox',
+        checked: config.get(ConfigKey.EnableTrayIcon),
+        click({ checked }: { checked: boolean }) {
+          config.set(ConfigKey.EnableTrayIcon, checked)
+
+          if (!checked) {
+            main.removeTrayIcon();
+          } else {
+            main.createTray();
+          }
+        }
+      },
+      {
+        label: 'Edit Config file manually',
+        click() {
+          config.openInEditor()
+        }
+      }
+    ]
+  },
+  {
+    label: 'Window',
+    role: 'window',
     submenu: [
       {
         label: `Reload`,
@@ -58,11 +116,12 @@ const menuTemplate: any[] = [
       },
       {
         label: 'Minimize',
+        accelerator: 'CommandOrControl+M',
         role: 'minimize'
       },
       {
         label: 'Close',
-        accelerator: 'escape',
+        accelerator: 'CommandOrControl+W',
         role: 'close'
       }
     ]
@@ -75,11 +134,15 @@ const menuTemplate: any[] = [
         label: `About`,
         role: 'about',
         click() {
-          let mainWindow = BrowserWindow.getAllWindows()[0]
-          mainWindow.webContents.send('display_about_window')
+          main.displayAppAbout()
         }
       },
-
+      {
+        label: 'View Logs',
+        click() {
+          shell.openItem(log.transports.file.findLogPath())
+        }
+      },
       {
         type: 'separator'
       },

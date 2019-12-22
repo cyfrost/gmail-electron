@@ -1,6 +1,6 @@
 DIST_DIR=dist
 
-DEPENDENCIES = node npm yarn rpmbuild
+DEPENDENCIES = node npm yarn
 K := $(foreach exec,$(DEPENDENCIES), $(if $(shell which "$(exec)"),dependencies_ok,$(error Command Not Found: "$(exec)")))
 
 # Default target executed on error.
