@@ -75,8 +75,7 @@ const menuTemplate: any[] = [
         checked: config.get(ConfigKey.AutoHideMenuBar),
         click({ checked }: { checked: boolean }) {
           config.set(ConfigKey.AutoHideMenuBar, checked)
-          getMainWindow().setMenuBarVisibility(!checked)
-          getMainWindow().setAutoHideMenuBar(checked)
+          main.setAppMenus();
         }
       },
       {
@@ -85,12 +84,7 @@ const menuTemplate: any[] = [
         checked: config.get(ConfigKey.EnableTrayIcon),
         click({ checked }: { checked: boolean }) {
           config.set(ConfigKey.EnableTrayIcon, checked)
-
-          if (!checked) {
-            main.removeTrayIcon();
-          } else {
-            main.createTray();
-          }
+          checked ? main.createTray() : main.removeTrayIcon();
         }
       },
       {

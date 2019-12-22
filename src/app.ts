@@ -36,7 +36,7 @@ function init() {
   }
 
   validateSingleInstance();
-  app.setAppUserModelId("com.cyfrost.gmail");
+  app.setAppUserModelId("Gmail");
   initDownloads();
   electronContextMenu({
     showCopyImageAddress: true,
@@ -85,7 +85,7 @@ function createWindow(): void {
   const lastWindowState: any = config.get(ConfigKey.LastWindowState);
 
   mainWindow = new BrowserWindow({
-    title: app.getName(),
+    title: app.name,
     width: lastWindowState.bounds.width,
     height: lastWindowState.bounds.height,
     x: lastWindowState.bounds.x,
@@ -173,14 +173,23 @@ function loadNetworkChangeHandler() {
 
 function setAppMenus() {
   Menu.setApplicationMenu(menu);
-  mainWindow.setMenuBarVisibility(false);
-  mainWindow.setAutoHideMenuBar(true);
+  const isMenuBarVisible = !config.get(ConfigKey.AutoHideMenuBar)
+  mainWindow.setMenuBarVisibility(isMenuBarVisible);
+  mainWindow.autoHideMenuBar = !isMenuBarVisible;
+}
+
+function checkAutoStartStatus() {
+  const isAutoStartEnabled = config.get(ConfigKey.AutoStartOnLogin);
+  if (is.windows) {
+    isAutoStartEnabled ? addSelfToSystemStartup() : removeSelfToSystemStartup()
+  }
 }
 
 function initGmail() {
   loadNetworkChangeHandler();
   createWindow();
   setAppMenus();
+  checkAutoStartStatus();
   if (config.get(ConfigKey.EnableTrayIcon) && !tray) {
     createTray();
   }
@@ -253,7 +262,7 @@ function cleanURLFromGoogle(url: string): string {
 }
 
 function createTray() {
-  const appName = app.getName();
+  const appName = app.name;
   const iconPath = path.join(__dirname, "../src/assets/tray-icon.png");
 
   const contextMenuTemplate: MenuItemConstructorOptions[] = [
@@ -288,22 +297,16 @@ function createTray() {
 function addSelfToSystemStartup() {
   if (is.windows) {
     const appFolder = path.dirname(process.execPath)
-    const updateExe = path.resolve(appFolder, '..', 'Update.exe')
     const exeName = path.basename(process.execPath)
-
+    const appPath = path.resolve(appFolder, exeName)
+    
     app.setLoginItemSettings({
       openAtLogin: true,
-      path: updateExe,
-      args: [
-        '--processStart', `"${exeName}"`
-      ]
+      path: appPath
     })
   } else if (is.linux) {
 
   }
-
-
-
 }
 
 function removeSelfToSystemStartup() {
@@ -341,4 +344,4 @@ function displayAppAbout() {
   aboutWindow.show();
 }
 
-export { removeTrayIcon, createTray, displayAppAbout, addSelfToSystemStartup, removeSelfToSystemStartup }
+export { setAppMenus, removeTrayIcon, createTray, displayAppAbout, addSelfToSystemStartup, removeSelfToSystemStartup }
