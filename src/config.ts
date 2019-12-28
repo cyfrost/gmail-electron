@@ -41,7 +41,7 @@ const defaults = {
   [ConfigKey.LaunchMinimized]: false,
   [ConfigKey.AutoHideMenuBar]: false,
   [ConfigKey.AutoStartOnLogin]: false,
-  [ConfigKey.EnableTrayIcon]: false
+  [ConfigKey.EnableTrayIcon]: true
 };
 
 const config = new Store<TypedStore>({

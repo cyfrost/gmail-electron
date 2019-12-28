@@ -226,7 +226,7 @@ function onNewWindowEventHandler(event, url, _1, _2, options) {
     });
     event.newGuest.webContents.on('new-window', (event: Event, url: string) => {
       event.preventDefault();
-      shell.openExternal(url);
+      shell.openExternal(cleanURLFromGoogle(url));
     });
   } else {
     shell.openExternal(cleanURLFromGoogle(url));

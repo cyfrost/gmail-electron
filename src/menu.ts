@@ -50,6 +50,9 @@ const menuTemplate: any[] = [
     role: 'editMenu'
   },
   {
+    role: 'viewMenu'
+  },
+  {
     label: 'Settings',
     submenu: [
       {
