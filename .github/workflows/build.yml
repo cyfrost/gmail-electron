@@ -4,17 +4,11 @@ on: push
 
 jobs:
   release:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v2.1.0
-        env:
-          RUNNER_TEMP: /tmp
       - run: |
           apt update && apt upgrade -y && apt install -y --no-install-recommends git jq curl wget binutils make libopenjp2-tools rpm bsdtar && \
           NVM_LATEST_VER=$(curl -s https://api.github.com/repos/nvm-sh/nvm/releases/latest | jq -r ".name") && \
