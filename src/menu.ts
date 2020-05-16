@@ -91,6 +91,22 @@ const menuTemplate: any[] = [
         }
       },
       {
+      {
+        label: 'Enable Dark Mode',
+        type: 'checkbox',
+        checked: config.get(ConfigKey.EnableDarkTheme),
+        click({ checked }: { checked: boolean }) {
+          config.set(ConfigKey.EnableDarkTheme, checked);
+          main.reloadAppTheme();
+        }
+      },
+      {
+        label: 'Reload theme',
+        click() {
+          main.reloadAppTheme();
+        }
+      },
+      {
         label: 'Edit Config file manually',
         click() {
           config.openInEditor();

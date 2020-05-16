@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import { app, ipcMain as ipc, shell, BrowserWindow, Menu, Tray, MenuItemConstructorOptions } from 'electron';
+import { app, dialog, ipcMain as ipc, shell, BrowserWindow, Menu, Tray, MenuItemConstructorOptions } from 'electron';
 import * as log from 'electron-log';
 import * as electronContextMenu from 'electron-context-menu';
 import { init as initDownloadProvider } from './download';
@@ -8,7 +8,6 @@ import config, { ConfigKey } from './config';
 import menu from './menu';
 import { getUrlAccountId } from './helpers';
 import { is } from 'electron-util';
-const { dialog } = require('electron');
 
 let mainWindow: BrowserWindow;
 let onlineStatusWindow: BrowserWindow;
@@ -100,7 +99,8 @@ function createWindow(): void {
     y: lastWindowState.bounds.y,
     webPreferences: {
       nodeIntegration: false,
-      nativeWindowOpen: true
+      nativeWindowOpen: false,
+      preload: path.join(__dirname, 'preload-injected.js')
     },
     show: !shouldStartMinimized
   });
@@ -207,6 +207,7 @@ function onGmailLoadingFinishedHandler() {
     tray.setImage(path.join(__dirname, '../src/assets/tray-icon-unread.png'));
   }
   displayMainWindow();
+  reloadAppTheme();
 }
 
 function onNewWindowEventHandler(event, url, _1, _2, options) {
@@ -221,15 +222,14 @@ function onNewWindowEventHandler(event, url, _1, _2, options) {
     }
     event.newGuest = new BrowserWindow({
       ...options,
-      x: null,
-      y: null
-    });
-    event.newGuest.webContents.on('new-window', (event: Event, url: string) => {
-      event.preventDefault();
-      shell.openExternal(cleanURLFromGoogle(url));
-    });
-  } else {
-    shell.openExternal(cleanURLFromGoogle(url));
+
+function reloadAppTheme() {
+  const isDarkThemeEnabled = config.get(ConfigKey.EnableDarkTheme) === true;
+  const wc = mainWindow.webContents;
+  const ipcEvent = isDarkThemeEnabled ? 'enable-dark-mode' : 'disable-dark-mode';
+
+  wc.send(ipcEvent, config.get(ConfigKey.DarkReaderConfig));
+}
   }
   return null;
 }
@@ -385,4 +385,4 @@ function showAppAbout() {
   aboutWindow.show();
 }
 
-export { setAppMenus, removeTrayIcon, createTray, showAppAbout, addSelfToSystemStartup, removeSelfToSystemStartup };
+export { setAppMenus, removeTrayIcon, createTray, showAppAbout, addSelfToSystemStartup, removeSelfToSystemStartup, reloadAppTheme };

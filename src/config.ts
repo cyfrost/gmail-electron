@@ -16,7 +16,8 @@ export enum ConfigKey {
   LaunchMinimized = 'launchMinimized',
   AutoStartOnLogin = 'autoStartOnLogin',
   AutoHideMenuBar = 'autoHideMenuBar',
-  EnableTrayIcon = 'enableTrayIcon'
+  EnableDarkTheme = 'EnableDarkTheme',
+  DarkReaderConfig = 'DarkReaderConfig'
 }
 
 type TypedStore = {
@@ -25,6 +26,14 @@ type TypedStore = {
   [ConfigKey.AutoHideMenuBar]: boolean;
   [ConfigKey.AutoStartOnLogin]: boolean;
   [ConfigKey.EnableTrayIcon]: boolean;
+  [ConfigKey.EnableDarkTheme]: boolean;
+  [ConfigKey.DarkReaderConfig]: object;
+};
+
+const defaultDarkReaderConfig = {
+  brightness: 100,
+  contrast: 100,
+  sepia: 0,
 };
 
 const defaults = {
@@ -41,7 +50,8 @@ const defaults = {
   [ConfigKey.LaunchMinimized]: false,
   [ConfigKey.AutoHideMenuBar]: false,
   [ConfigKey.AutoStartOnLogin]: false,
-  [ConfigKey.EnableTrayIcon]: true
+  [ConfigKey.EnableDarkTheme]: false,
+  [ConfigKey.DarkReaderConfig]: defaultDarkReaderConfig
 };
 
 const config = new Store<TypedStore>({
