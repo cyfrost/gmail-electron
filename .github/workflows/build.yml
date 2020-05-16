@@ -10,7 +10,7 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v2.1.0
       - run: |
-          apt update && apt upgrade -y && apt install -y --no-install-recommends git jq curl wget binutils make libopenjp2-tools rpm bsdtar && \
+          sudo apt update && sudo apt upgrade -y && sudo apt install -y --no-install-recommends git jq curl wget binutils make libopenjp2-tools rpm bsdtar && \
           NVM_LATEST_VER=$(curl -s https://api.github.com/repos/nvm-sh/nvm/releases/latest | jq -r ".name") && \
           curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST_VER/install.sh | bash && \
           export NVM_DIR="$HOME/.nvm"
