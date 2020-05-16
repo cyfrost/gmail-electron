@@ -13,15 +13,19 @@ const messages = {
 };
 
 function onDownloadComplete(filename: string, state: State): void {
-  createNotification(`Download ${state}`, `Download of file ${filename} ${messages[state]}.`, () => {
-    shell.openItem(path.join(app.getPath('downloads'), filename))
-  });
+  createNotification(
+    `Download ${state}`,
+    `Download of file ${filename} ${messages[state]}.`,
+    () => {
+      shell.openItem(path.join(app.getPath('downloads'), filename));
+    }
+  );
 }
 
 export function init(): void {
   electronDl({
     showBadge: false,
-    onStarted: item => {
+    onStarted: (item) => {
       item.on('done', (_, state) => {
         onDownloadComplete(item.getFilename(), state);
       });

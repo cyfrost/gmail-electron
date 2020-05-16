@@ -9,7 +9,10 @@
   "license": "MIT",
   "main": "dist-js/app.js",
   "scripts": {
-    "start": "tsc && electron ."
+    "start": "tsc && electron .",
+    "prettify": "yarn prettier --write 'src/**/*.ts'",
+    "pack": "tsc && electron-builder --dir",
+    "dist": "tsc && electron-builder --linux --windows --publish never"
   },
   "dependencies": {
     "@types/node": "12",
@@ -28,55 +31,19 @@
   "devDependencies": {
     "@sindresorhus/tsconfig": "^0.7.0",
     "@types/electron-settings": "^3.1.1",
-    "@types/electron-store": "^3.2.0",
     "@types/semver": "^7.2.0",
-    "@typescript-eslint/eslint-plugin": "^2.33.0",
     "electron": "8.3.0",
     "electron-builder": "^22.6.0",
-    "husky": "^4.2.5",
-    "lint-staged": "^10.2.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.5",
-    "typescript": "3.9.2",
-    "xo": "^0.30.0"
+    "typescript": "3.9.2"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.ts": [
-      "prettier --write",
-      "xo --fix"
-    ],
-    "*.css": [
-      "prettier --write",
-      "stylelint --fix"
-    ]
-  },
-  "xo": {
-    "extends": [
-      "xo-typescript",
-      "prettier/@typescript-eslint"
-    ],
-    "extensions": [
-      "ts"
-    ],
-    "envs": [
-      "node",
-      "browser"
-    ],
-    "prettier": true
-  },
-  "stylelint": {
-    "extends": "stylelint-config-xo",
-    "rules": {
-      "declaration-no-important": null,
-      "selector-class-pattern": null,
-      "indentation": 2,
-      "property-no-vendor-prefix": null
-    }
+  "prettier": {
+    "bracketSpacing": true,
+    "singleQuote": true,
+    "semi": true,
+    "trailingComma": "none",
+    "useTabs": false
   },
   "build": {
     "artifactName": "${name}-${version}-${os}.${ext}",

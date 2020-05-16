@@ -1,6 +1,15 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import { app, dialog, ipcMain as ipc, shell, BrowserWindow, Menu, Tray, MenuItemConstructorOptions } from 'electron';
+import {
+  app,
+  dialog,
+  ipcMain as ipc,
+  shell,
+  BrowserWindow,
+  Menu,
+  Tray,
+  MenuItemConstructorOptions
+} from 'electron';
 import * as log from 'electron-log';
 import * as electronContextMenu from 'electron-context-menu';
 import { init as initDownloadProvider } from './download';
@@ -17,14 +26,19 @@ let isQuitting = false;
 let tray: Tray;
 let isOnline = false;
 let trayContextMenu: any;
-const shouldStartMinimized = config.get(ConfigKey.EnableTrayIcon) && (
-  app.commandLine.hasSwitch('start-minimized') || app.commandLine.hasSwitch('launch-minimized') || config.get(ConfigKey.LaunchMinimized));
+const shouldStartMinimized =
+  config.get(ConfigKey.EnableTrayIcon) &&
+  (app.commandLine.hasSwitch('start-minimized') ||
+    app.commandLine.hasSwitch('launch-minimized') ||
+    config.get(ConfigKey.LaunchMinimized));
 
 init();
 
 function noMacOS() {
   if (is.macos) {
-    log.error('Fatal: Detected process env as darwin, aborting due to lack of app support.');
+    log.error(
+      'Fatal: Detected process env as darwin, aborting due to lack of app support.'
+    );
     app.quit();
   }
 }
@@ -66,18 +80,24 @@ function initGmail() {
 
   mainWindow.webContents.on('did-finish-load', onGmailLoadingFinishedHandler);
 
-  mainWindow.webContents.on('new-window', (event, url, _1, _2, options) => onNewWindowEventHandler(event, url, _1, _2, options));
+  mainWindow.webContents.on('new-window', (event, url, _1, _2, options) =>
+    onNewWindowEventHandler(event, url, _1, _2, options)
+  );
 }
 
 function validateSingleInstance() {
   const gotTheLock = app.requestSingleInstanceLock();
 
   if (!gotTheLock) {
-    log.error('Fatal: Failed to acquire single instance lock on main thread. Aborting!');
+    log.error(
+      'Fatal: Failed to acquire single instance lock on main thread. Aborting!'
+    );
     app.quit();
   } else {
     app.on('second-instance', () => {
-      log.info('Detected second instance invocation, resuing initial instance instead');
+      log.info(
+        'Detected second instance invocation, resuing initial instance instead'
+      );
       mainWindow.show();
     });
   }
@@ -85,7 +105,9 @@ function validateSingleInstance() {
 
 function displayMainWindow() {
   shouldStartMinimized ? mainWindow.hide() : mainWindow.show();
-  log.info(`Window display mode: ${shouldStartMinimized ? 'hidden' : 'visible'}`);
+  log.info(
+    `Window display mode: ${shouldStartMinimized ? 'hidden' : 'visible'}`
+  );
 }
 
 function createWindow(): void {
@@ -107,13 +129,17 @@ function createWindow(): void {
 
   log.info('Main window creation successful!');
 
-  if (lastWindowState.maximized && !mainWindow.isMaximized() && !shouldStartMinimized) {
+  if (
+    lastWindowState.maximized &&
+    !mainWindow.isMaximized() &&
+    !shouldStartMinimized
+  ) {
     mainWindow.maximize();
   }
 
   mainWindow.loadURL('https://mail.google.com');
 
-  mainWindow.on('close', e => {
+  mainWindow.on('close', (e) => {
     if (!isQuitting) {
       e.preventDefault();
       mainWindow.blur();
@@ -157,7 +183,9 @@ function createMailto(url: string): void {
     parent: mainWindow
   });
 
-  replyToWindow.loadURL(`https://mail.google.com/mail/?extsrc=mailto&url=${url}`);
+  replyToWindow.loadURL(
+    `https://mail.google.com/mail/?extsrc=mailto&url=${url}`
+  );
 }
 
 function loadNetworkChangeHandler() {
@@ -168,13 +196,16 @@ function loadNetworkChangeHandler() {
     webPreferences: { nodeIntegration: true }
   });
 
-  onlineStatusWindow.loadURL(`file://${__dirname}/../src/assets/OnlineStatus.html`);
+  onlineStatusWindow.loadURL(
+    `file://${__dirname}/../src/assets/OnlineStatus.html`
+  );
 
   ipc.on('online-status-changed', (_event: any, status: string) => {
     isOnline = status === 'online';
     log.info('Network change detected: now ' + status);
     if (config.get(ConfigKey.EnableTrayIcon) && tray) {
-      const icon = status === 'online' ? 'tray-icon-unread.png' : 'tray-icon.png';
+      const icon =
+        status === 'online' ? 'tray-icon-unread.png' : 'tray-icon.png';
       const iconPath = path.join(__dirname, '../src/assets/', icon);
       tray.setImage(iconPath);
     }
@@ -193,7 +224,9 @@ function setAppMenus() {
 function checkAutoStartStatus() {
   const isAutoStartEnabled = config.get(ConfigKey.AutoStartOnLogin);
   log.info(
-    `Auto-start at login is ${isAutoStartEnabled ? 'enabled' : 'disabled'}, ${isAutoStartEnabled ? 'enabling' : 'disabling'} login item (if applicable).`
+    `Auto-start at login is ${isAutoStartEnabled ? 'enabled' : 'disabled'}, ${
+      isAutoStartEnabled ? 'enabling' : 'disabling'
+    } login item (if applicable).`
   );
 
   isAutoStartEnabled ? addSelfToSystemStartup() : removeSelfToSystemStartup();
@@ -211,20 +244,20 @@ function onGmailLoadingFinishedHandler() {
 }
 
 function onNewWindowEventHandler(event, url, _1, _2, options) {
-  event.preventDefault()
+  event.preventDefault();
 
   if (url.startsWith('https://accounts.google.com')) {
-    mainWindow.loadURL(url)
-    return
+    mainWindow.loadURL(url);
+    return;
   }
 
   if (url.startsWith('https://mail.google.com')) {
-    const currentAccountId = getUrlAccountId(mainWindow.webContents.getURL())
-    const targetAccountId = getUrlAccountId(url)
+    const currentAccountId = getUrlAccountId(mainWindow.webContents.getURL());
+    const targetAccountId = getUrlAccountId(url);
 
     if (targetAccountId !== currentAccountId) {
-      mainWindow.loadURL(url)
-      return
+      mainWindow.loadURL(url);
+      return;
     }
 
     // Center the new window on the screen
@@ -233,42 +266,41 @@ function onNewWindowEventHandler(event, url, _1, _2, options) {
       titleBarStyle: 'default',
       x: undefined,
       y: undefined
-    })
+    });
 
-    event.newGuest.webContents.on(
-      'new-window',
-      (event: Event, url: string) => {
-        event.preventDefault()
-        openExternalUrl(url)
-      }
-    )
+    event.newGuest.webContents.on('new-window', (event: Event, url: string) => {
+      event.preventDefault();
+      openExternalUrl(url);
+    });
 
-    return
+    return;
   }
 
   if (url.startsWith('about:blank')) {
     const win = new BrowserWindow({
       ...options,
       show: false
-    })
+    });
 
     win.webContents.once('will-redirect', (_event, url) => {
-      openExternalUrl(url)
-      win.destroy()
-    })
+      openExternalUrl(url);
+      win.destroy();
+    });
 
-    event.newGuest = win
+    event.newGuest = win;
 
-    return
+    return;
   }
 
-  openExternalUrl(url)
+  openExternalUrl(url);
 }
 
 function reloadAppTheme() {
   const isDarkThemeEnabled = config.get(ConfigKey.EnableDarkTheme) === true;
   const wc = mainWindow.webContents;
-  const ipcEvent = isDarkThemeEnabled ? 'enable-dark-mode' : 'disable-dark-mode';
+  const ipcEvent = isDarkThemeEnabled
+    ? 'enable-dark-mode'
+    : 'disable-dark-mode';
 
   wc.send(ipcEvent, config.get(ConfigKey.DarkReaderConfig));
 }
@@ -291,14 +323,14 @@ async function openExternalUrl(url: string): Promise<void> {
       message: `Do you want to open the external link "${cleanURL}" in your default browser?`,
       checkboxLabel: `Trust all links on ${origin}`,
       detail: cleanURL
-    })
+    });
 
     if (response !== 0) {
       return;
     }
 
     if (checkboxChecked) {
-      config.set(ConfigKey.TrustedHosts, [...trustedHosts, origin])
+      config.set(ConfigKey.TrustedHosts, [...trustedHosts, origin]);
     }
 
     shell.openExternal(cleanURL);
@@ -357,7 +389,9 @@ function createTray() {
 function setAutoStartOnFreedesktop(enableAutoStart: boolean) {
   const xdgConfigDirectory: string = process.env.XDG_CONFIG_HOME;
   const useFallback = !xdgConfigDirectory || !fs.existsSync(xdgConfigDirectory);
-  const startupDirectory = useFallback ? path.join(require('os').homedir(), '.config/autostart') : path.join(xdgConfigDirectory, 'autostart');
+  const startupDirectory = useFallback
+    ? path.join(require('os').homedir(), '.config/autostart')
+    : path.join(xdgConfigDirectory, 'autostart');
   const dotDesktopFile = path.join(startupDirectory, 'gmail.desktop');
   log.info(`File: ${dotDesktopFile}, using fallback: ${useFallback}`);
 
@@ -367,7 +401,7 @@ function setAutoStartOnFreedesktop(enableAutoStart: boolean) {
       return;
     }
 
-    fs.unlink(dotDesktopFile, err => {
+    fs.unlink(dotDesktopFile, (err) => {
       if (err) {
         return log.error(`Failed to remove self from autostart. ${err}`);
       }
@@ -377,8 +411,7 @@ function setAutoStartOnFreedesktop(enableAutoStart: boolean) {
     return;
   }
 
-  const freeDesktopStartupScript =
-    `
+  const freeDesktopStartupScript = `
 [Desktop Entry]
 Name=Gmail
 Exec=/opt/Gmail/gmail %U
@@ -391,7 +424,9 @@ Categories=Network;Office;
 `;
 
   if (fs.existsSync(dotDesktopFile)) {
-    log.warn('Autostart script already exists, overwriting with current config.');
+    log.warn(
+      'Autostart script already exists, overwriting with current config.'
+    );
   }
 
   fs.writeFile(dotDesktopFile, freeDesktopStartupScript, (err) => {
@@ -456,4 +491,12 @@ function showAppAbout() {
   aboutWindow.show();
 }
 
-export { setAppMenus, removeTrayIcon, createTray, showAppAbout, addSelfToSystemStartup, removeSelfToSystemStartup, reloadAppTheme };
+export {
+  setAppMenus,
+  removeTrayIcon,
+  createTray,
+  showAppAbout,
+  addSelfToSystemStartup,
+  removeSelfToSystemStartup,
+  reloadAppTheme
+};
