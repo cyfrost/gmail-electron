@@ -211,17 +211,59 @@ function onGmailLoadingFinishedHandler() {
 }
 
 function onNewWindowEventHandler(event, url, _1, _2, options) {
-  event.preventDefault();
-  if (/^https:\/\/accounts\.google\.com/.test(url)) {
-    mainWindow.loadURL(url);
-  } else if (/^https:\/\/mail\.google\.com/.test(url)) {
-    const currentAccountId = getUrlAccountId(mainWindow.webContents.getURL());
-    const targetAccountId = getUrlAccountId(url);
+  event.preventDefault()
+
+  if (url.startsWith('https://accounts.google.com')) {
+    mainWindow.loadURL(url)
+    return
+  }
+
+  if (url.startsWith('https://mail.google.com')) {
+    const currentAccountId = getUrlAccountId(mainWindow.webContents.getURL())
+    const targetAccountId = getUrlAccountId(url)
+
     if (targetAccountId !== currentAccountId) {
-      return mainWindow.loadURL(url);
+      mainWindow.loadURL(url)
+      return
     }
+
+    // Center the new window on the screen
     event.newGuest = new BrowserWindow({
       ...options,
+      titleBarStyle: 'default',
+      x: undefined,
+      y: undefined
+    })
+
+    event.newGuest.webContents.on(
+      'new-window',
+      (event: Event, url: string) => {
+        event.preventDefault()
+        openExternalUrl(url)
+      }
+    )
+
+    return
+  }
+
+  if (url.startsWith('about:blank')) {
+    const win = new BrowserWindow({
+      ...options,
+      show: false
+    })
+
+    win.webContents.once('will-redirect', (_event, url) => {
+      openExternalUrl(url)
+      win.destroy()
+    })
+
+    event.newGuest = win
+
+    return
+  }
+
+  openExternalUrl(url)
+}
 
 function reloadAppTheme() {
   const isDarkThemeEnabled = config.get(ConfigKey.EnableDarkTheme) === true;
@@ -230,8 +272,37 @@ function reloadAppTheme() {
 
   wc.send(ipcEvent, config.get(ConfigKey.DarkReaderConfig));
 }
+
+async function openExternalUrl(url: string): Promise<void> {
+  const shouldConfirmLink = config.get(ConfigKey.ConfirmExternalLinks) === true;
+  const cleanURL = cleanURLFromGoogle(url);
+  const { origin } = new URL(cleanURL);
+  const trustedHosts = config.get(ConfigKey.TrustedHosts);
+
+  if (!shouldConfirmLink) {
+    shell.openExternal(cleanURL);
+    return;
   }
-  return null;
+
+  if (!trustedHosts.includes(origin)) {
+    const { response, checkboxChecked } = await dialog.showMessageBox({
+      type: 'info',
+      buttons: ['Open Link', 'Cancel'],
+      message: `Do you want to open the external link "${cleanURL}" in your default browser?`,
+      checkboxLabel: `Trust all links on ${origin}`,
+      detail: cleanURL
+    })
+
+    if (response !== 0) {
+      return;
+    }
+
+    if (checkboxChecked) {
+      config.set(ConfigKey.TrustedHosts, [...trustedHosts, origin])
+    }
+
+    shell.openExternal(cleanURL);
+  }
 }
 
 function cleanURLFromGoogle(url: string): string {
@@ -307,7 +378,7 @@ function setAutoStartOnFreedesktop(enableAutoStart: boolean) {
   }
 
   const freeDesktopStartupScript =
-`
+    `
 [Desktop Entry]
 Name=Gmail
 Exec=/opt/Gmail/gmail %U
@@ -324,7 +395,7 @@ Categories=Network;Office;
   }
 
   fs.writeFile(dotDesktopFile, freeDesktopStartupScript, (err) => {
-    if(err) {
+    if (err) {
       return log.error(`Failed to add Gmail to startup ${err}`);
     }
 

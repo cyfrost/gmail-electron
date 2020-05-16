@@ -16,6 +16,9 @@ export enum ConfigKey {
   LaunchMinimized = 'launchMinimized',
   AutoStartOnLogin = 'autoStartOnLogin',
   AutoHideMenuBar = 'autoHideMenuBar',
+  EnableTrayIcon = 'enableTrayIcon',
+  TrustedHosts = 'trustedHosts',
+  ConfirmExternalLinks = 'confirmExternalLinks',
   EnableDarkTheme = 'EnableDarkTheme',
   DarkReaderConfig = 'DarkReaderConfig'
 }
@@ -26,6 +29,8 @@ type TypedStore = {
   [ConfigKey.AutoHideMenuBar]: boolean;
   [ConfigKey.AutoStartOnLogin]: boolean;
   [ConfigKey.EnableTrayIcon]: boolean;
+  [ConfigKey.TrustedHosts]: string[];
+  [ConfigKey.ConfirmExternalLinks]: boolean;
   [ConfigKey.EnableDarkTheme]: boolean;
   [ConfigKey.DarkReaderConfig]: object;
 };
@@ -50,6 +55,9 @@ const defaults = {
   [ConfigKey.LaunchMinimized]: false,
   [ConfigKey.AutoHideMenuBar]: false,
   [ConfigKey.AutoStartOnLogin]: false,
+  [ConfigKey.EnableTrayIcon]: true,
+  [ConfigKey.TrustedHosts]: [],
+  [ConfigKey.ConfirmExternalLinks]: true,
   [ConfigKey.EnableDarkTheme]: false,
   [ConfigKey.DarkReaderConfig]: defaultDarkReaderConfig
 };

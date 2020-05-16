@@ -91,6 +91,13 @@ const menuTemplate: any[] = [
         }
       },
       {
+        label: 'Confirm External Links before Opening',
+        type: 'checkbox',
+        checked: config.get(ConfigKey.ConfirmExternalLinks),
+        click({ checked }: { checked: boolean }) {
+          config.set(ConfigKey.ConfirmExternalLinks, checked)
+        }
+      },
       {
         label: 'Enable Dark Mode',
         type: 'checkbox',
