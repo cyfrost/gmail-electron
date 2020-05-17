@@ -7,18 +7,19 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-18.04
+    runs-on: macos-latest
 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v2.1.0
-      - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v2.1.0
+      - run: HOMEBREW_NO_AUTO_UPDATE=1 brew install rpm
+      - run: yarn --frozen-lockfile
+      - run: yarn dist
+        env:
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+      - uses: svenstaro/upload-release-action@v1.0.1
         with:
-          node-version: 12
-      - name: Build/release Electron app
-        uses: samuelmeuli/action-electron-builder@v1.5.0
-        with:
-          github_token: ${{ secrets.github_token }}
-          args: "--windows --linux"
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/*
+          tag: ${{ github.ref }}
+          file_glob: true
