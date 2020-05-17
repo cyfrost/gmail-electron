@@ -12,33 +12,13 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v2.1.0
-      - run: |
-          sudo apt update -y --fix-missing && \
-          sudo apt upgrade -y && \
-          sudo dpkg --add-architecture i386 && \
-          sudo apt update -y --fix-missing && \
-          sudo apt upgrade -y && \
-          sudo apt install -y --no-install-recommends software-properties-common git jq curl wget binutils make libopenjp2-tools rpm bsdtar && \
-          sudo apt autoremove -y && \
-          sudo apt autoclean -y && \
-          wget -O - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add - && \
-          sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main' && \
-          wget -qO- https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/Release.key | sudo apt-key add - && \
-          sudo sh -c 'echo "deb https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/ ./" > /etc/apt/sources.list.d/obs.list' && \
-          sudo apt update -y --fix-missing && \
-          sudo apt upgrade -y && \
-          sudo apt install --no-install-recommends winehq-stable && \
-          NVM_LATEST_VER=$(curl -s https://api.github.com/repos/nvm-sh/nvm/releases/latest | jq -r ".name") && \
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST_VER/install.sh | bash && \
-          export NVM_DIR="$HOME/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-          nvm install node && \
-          nvm install-latest-npm && \
-          nvm alias default node && \
-          npm update -g && \
-          npm i -g yarn
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1.5.0
         with:
           github_token: ${{ secrets.github_token }}
+          args: "--windows --linux"
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
