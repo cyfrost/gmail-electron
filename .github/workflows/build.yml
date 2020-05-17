@@ -14,9 +14,6 @@ jobs:
       - run: HOMEBREW_NO_AUTO_UPDATE=1 brew install rpm
       - run: yarn --frozen-lockfile
       - run: yarn dist
-        env:
-          CSC_LINK: ${{ secrets.CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
       - name: Upload release
         uses: svenstaro/upload-release-action@1.0.1
         with:
