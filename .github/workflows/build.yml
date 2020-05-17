@@ -13,8 +13,6 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v2.1.0
       - run: |
-          apt update -y;
-          apt install sudo;
           sudo apt update && \
           sudo apt upgrade -y && \
           sudo dpkg --add-architecture i386 && \
