@@ -14,7 +14,8 @@
     "pack": "tsc && electron-builder --dir",
     "dist": "tsc && electron-builder --linux --windows --publish never",
     "build": "tsc && electron-builder --windows --linux",
-		"release": "tsc && electron-builder --windows --linux --publish always"
+    "release": "tsc && electron-builder --windows --linux --publish always",
+    "compile": "tsc"
   },
   "dependencies": {
     "@types/node": "12",
