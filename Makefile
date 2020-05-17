@@ -35,35 +35,35 @@ update:
 
 .PHONY: build-rpm
 build-rpm:
-	@./node_modules/.bin/electron-builder --linux rpm
+	@make compile && ./node_modules/.bin/electron-builder --linux rpm
 
 .PHONY: build-deb
 build-deb:
-	@./node_modules/.bin/electron-builder --linux deb
+	@make compile && ./node_modules/.bin/electron-builder --linux deb
 
 .PHONY: build-snap
 build-snap:
-	@./node_modules/.bin/electron-builder --linux snap
+	@make compile && ./node_modules/.bin/electron-builder --linux snap
 
 .PHONY: build-pacman
 build-pacman:
-	@./node_modules/.bin/electron-builder --linux pacman
+	@make compile && ./node_modules/.bin/electron-builder --linux pacman
 
 .PHONY: build-appimage
 build-appimage:
-	@./node_modules/.bin/electron-builder --linux appImage
+	@make compile && ./node_modules/.bin/electron-builder --linux appImage
 
 .PHONY: build-win
 build-win:
-	@make clean-js && ./node_modules/.bin/electron-builder --win
+	@make compile && ./node_modules/.bin/electron-builder --win
 
 .PHONY: build-linux
 build-linux:
-	@make clean-js && ./node_modules/.bin/electron-builder --linux
+	@make compile && ./node_modules/.bin/electron-builder --linux
 
 .PHONY: build-all
 build-all:
-	@make clean-js && ./node_modules/.bin/electron-builder --linux --windows
+	@make compile && ./node_modules/.bin/electron-builder --linux --windows
 
 .PHONY: run
 run:
