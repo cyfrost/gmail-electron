@@ -8,13 +8,29 @@ error:
 	@printf "\nUnknown target (Makefile error).\n\nAbort.\n\n"
 	@exit 2
 
+.PHONY: install-yarn
+install-yarn:
+	@curl --compressed -o- -L https://yarnpkg.com/install.sh | bash && source ~/.bashrc && yarn --version
+
+.PHONY: compile
+compile:
+	@make clean-js && yarn tsc
+
+.PHONY: install
+install:
+	@make env
+
+.PHONY: clean-js
+clean-js:
+	@rm -rf dist-js
+
 .PHONY: env
 env:
 	@yarn && printf "\nAll dependencies have been installed successfully!\n\n"
 
 .PHONY: update
 update:
-	@ncu -u && yarn && printf "\nAll dependencies have been updated successfully!\n\n"
+	@ncu -u -x "@types/node" && yarn && printf "\nAll dependencies have been updated successfully!\n\n"
 
 .PHONY: build-rpm
 build-rpm:
@@ -38,15 +54,15 @@ build-appimage:
 
 .PHONY: build-win
 build-win:
-	@./node_modules/.bin/electron-builder --win
+	@make clean-js && ./node_modules/.bin/electron-builder --win
 
 .PHONY: build-linux
 build-linux:
-	@./node_modules/.bin/electron-builder --linux
+	@make clean-js && ./node_modules/.bin/electron-builder --linux
 
 .PHONY: build-all
 build-all:
-	@./node_modules/.bin/electron-builder --linux --windows
+	@make clean-js && ./node_modules/.bin/electron-builder --linux --windows
 
 .PHONY: run
 run:
