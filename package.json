@@ -1,7 +1,7 @@
 {
   "name": "Gmail",
   "productName": "Gmail",
-  "version": "4.0.1",
+  "version": "4.0.0",
   "description": "Gmail desktop client for Linux, and Woedows",
   "private": true,
   "repository": "cyfrost/gmail-electron",
@@ -12,7 +12,9 @@
     "start": "tsc && electron .",
     "prettify": "yarn prettier --write 'src/**/*.ts'",
     "pack": "tsc && electron-builder --dir",
-    "dist": "tsc && electron-builder --linux --windows --publish never"
+    "dist": "tsc && electron-builder --linux --windows --publish never",
+    "build": "tsc && electron-builder --windows --linux",
+		"release": "tsc && electron-builder --windows --linux --publish always"
   },
   "dependencies": {
     "@types/node": "12",
