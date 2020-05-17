@@ -25,9 +25,9 @@ jobs:
           sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main' && \
           wget -qO- https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/Release.key | sudo apt-key add - && \
           sudo sh -c 'echo "deb https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/ ./" > /etc/apt/sources.list.d/obs.list' && \
-          apt update -y && \
-          apt upgrade -y && \
-          apt install --no-install-recommends winehq-stable && \
+          sudo apt update -y && \
+          sudo apt upgrade -y && \
+          sudo apt install --no-install-recommends winehq-stable && \
           NVM_LATEST_VER=$(curl -s https://api.github.com/repos/nvm-sh/nvm/releases/latest | jq -r ".name") && \
           curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST_VER/install.sh | bash && \
           export NVM_DIR="$HOME/.nvm"
