@@ -1,3 +1,4 @@
+SHELL:=/bin/bash
 DIST_DIR=dist
 
 DEPENDENCIES = node npm yarn
