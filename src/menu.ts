@@ -162,7 +162,7 @@ const menuTemplate: any[] = [
       {
         label: 'View Logs',
         click() {
-          shell.openItem(log.transports.file.findLogPath());
+          shell.openPath(log.transports.file.findLogPath());
         }
       },
       {
