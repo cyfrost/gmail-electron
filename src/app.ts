@@ -54,6 +54,10 @@ function isWoedows() {
   return process.platform === 'win32';
 }
 
+function getOS() {
+  return process.platform;
+}
+
 function init() {
   noMacOS();
   validateSingleInstance();
