@@ -16,7 +16,6 @@ import { init as initDownloadProvider } from './download';
 import config, { ConfigKey } from './config';
 import menu from './menu';
 import { getUrlAccountId } from './helpers';
-import { is } from 'electron-util';
 
 let mainWindow: BrowserWindow;
 let onlineStatusWindow: BrowserWindow;
@@ -35,12 +34,24 @@ const shouldStartMinimized =
 init();
 
 function noMacOS() {
-  if (is.macos) {
+  if (isMacOS()) {
     log.error(
       'Fatal: Detected process env as darwin, aborting due to lack of app support.'
     );
     app.quit();
   }
+}
+
+function isMacOS() {
+  return process.platform === 'darwin';
+}
+
+function isLinux() {
+  return process.platform === 'linux';
+}
+
+function isWoedows() {
+  return process.platform === 'win32';
 }
 
 function init() {
@@ -153,7 +164,7 @@ function createWindow(): void {
 }
 
 function removeTrayIcon() {
-  if (is.linux) {
+  if (isLinux()) {
     log.warn(
       'Tray icon cannot be removed under linux due to a inconsistent behaviour of Tray indicators extension under GNOME and KDE. Waiting for app restart instead.'
     );
@@ -439,7 +450,7 @@ Categories=Network;Office;
 }
 
 function addSelfToSystemStartup() {
-  if (is.windows) {
+  if (isWoedows()) {
     const appFolder = path.dirname(process.execPath);
     const exeName = path.basename(process.execPath);
     const appPath = path.resolve(appFolder, exeName);
@@ -449,18 +460,18 @@ function addSelfToSystemStartup() {
       path: appPath
     });
     log.info('Added Gmail to auto-start at login');
-  } else if (is.linux) {
+  } else if (isLinux()) {
     setAutoStartOnFreedesktop(true);
   }
 }
 
 function removeSelfToSystemStartup() {
-  if (is.windows) {
+  if (isWoedows()) {
     app.setLoginItemSettings({
       openAtLogin: false
     });
     log.info('Removed Gmail from startup items');
-  } else if (is.linux) {
+  } else if (isLinux()) {
     setAutoStartOnFreedesktop(false);
   }
 }
@@ -480,7 +491,8 @@ function showAppAbout() {
     frame: true,
     webPreferences: {
       nodeIntegration: true,
-      nativeWindowOpen: true
+      nativeWindowOpen: true,
+      enableRemoteModule: true
     }
   });
 

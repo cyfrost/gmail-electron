@@ -1,7 +1,7 @@
 {
   "name": "Gmail",
   "productName": "Gmail",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "Gmail desktop client for Linux, and Woedows",
   "private": true,
   "repository": "cyfrost/gmail-electron",
@@ -18,28 +18,27 @@
     "compile": "tsc"
   },
   "dependencies": {
-    "@types/node": "12",
-    "darkreader": "^4.9.11",
-    "electron-context-menu": "^2.0.1",
+    "@types/node": "14",
+    "darkreader": "^4.9.22",
+    "electron-context-menu": "^2.3.0",
     "electron-debug": "^3.1.0",
-    "electron-dl": "^3.0.1",
-    "electron-log": "^4.2.2",
+    "electron-dl": "^3.0.2",
+    "electron-log": "^4.3.0",
     "electron-settings": "^4.0.2",
-    "electron-store": "5.2.0",
-    "electron-updater": "^4.3.1",
-    "electron-util": "^0.14.2",
+    "electron-store": "6.0.1",
+    "electron-updater": "^4.3.5",
     "element-ready": "^4.1.1",
-    "eslint": "^7.3.1"
+    "eslint": "^7.12.1"
   },
   "devDependencies": {
     "@sindresorhus/tsconfig": "^0.7.0",
-    "@types/electron-settings": "^3.1.1",
-    "@types/semver": "^7.3.1",
-    "electron": "9.0.5",
-    "electron-builder": "^22.7.0",
+    "@types/electron-settings": "^3.1.2",
+    "@types/semver": "^7.3.4",
+    "electron": "10.1.5",
+    "electron-builder": "^22.9.1",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.0.5",
-    "typescript": "3.9.5"
+    "prettier": "^2.1.2",
+    "typescript": "4.0.5"
   },
   "prettier": {
     "bracketSpacing": true,
