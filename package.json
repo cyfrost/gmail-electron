@@ -19,26 +19,26 @@
   },
   "dependencies": {
     "@types/node": "14",
-    "darkreader": "^4.9.22",
-    "electron-context-menu": "^2.3.0",
-    "electron-debug": "^3.1.0",
+    "darkreader": "^4.9.26",
+    "electron-context-menu": "^2.4.0",
+    "electron-debug": "^3.2.0",
     "electron-dl": "^3.0.2",
-    "electron-log": "^4.3.0",
+    "electron-log": "^4.3.1",
     "electron-settings": "^4.0.2",
     "electron-store": "6.0.1",
     "electron-updater": "^4.3.5",
-    "element-ready": "^4.1.1",
-    "eslint": "^7.12.1"
+    "element-ready": "^5.0.0",
+    "eslint": "^7.17.0"
   },
   "devDependencies": {
-    "@sindresorhus/tsconfig": "^0.7.0",
+    "@sindresorhus/tsconfig": "^0.8.0",
     "@types/electron-settings": "^3.1.2",
     "@types/semver": "^7.3.4",
-    "electron": "10.1.5",
+    "electron": "11.2.0",
     "electron-builder": "^22.9.1",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.1.2",
-    "typescript": "4.0.5"
+    "prettier": "^2.2.1",
+    "typescript": "4.1.3"
   },
   "prettier": {
     "bracketSpacing": true,

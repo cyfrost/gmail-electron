@@ -136,6 +136,7 @@ function createWindow(): void {
     y: lastWindowState.bounds.y,
     webPreferences: {
       nodeIntegration: false,
+      contextIsolation: true,
       nativeWindowOpen: false,
       preload: path.join(__dirname, 'preload-injected.js')
     },
@@ -208,7 +209,7 @@ function loadNetworkChangeHandler() {
     width: 0,
     height: 0,
     show: false,
-    webPreferences: { nodeIntegration: true }
+    webPreferences: { nodeIntegration: true, contextIsolation: false }
   });
 
   onlineStatusWindow.loadURL(
@@ -495,6 +496,7 @@ function showAppAbout() {
     frame: true,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
       nativeWindowOpen: true,
       enableRemoteModule: true
     }
